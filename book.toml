@@ -1,0 +1,30 @@
+[book]
+authors = ["zjp <jiping_zhou@foxmail.com>"]
+language = "zh"
+multilingual = false
+src = "src"
+title = "book-name"
+
+[preprocessor.theme]
+pagetoc = true
+sidebar-width = "250px"
+
+[output.html]
+default-theme = "ayu"
+git-repository-url = ""
+additional-css = ["theme/pagetoc.css"]
+additional-js = ["theme/pagetoc.js"]
+
+[output.html.fold]
+enable = false
+level = 1
+
+[output.html.playground]
+editable = true
+
+[output.html.print]
+enable = false
+
+[output.theme-ace]
+theme-white = "xcode"
+theme-dark = "monokai"
