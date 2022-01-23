@@ -1,13 +1,11 @@
-# mdbook-template
+# Rust 学习笔记
 
-Yield a mdbook demo with [mdbook-theme](https://github.com/zjp-CN/mdbook-theme)
-and a yml file for github action automation and page publication.
+[<img alt="github" src="https://img.shields.io/github/license/zjp-CN/rust-note?color=blue" height="20">](https://github.com/zjp-CN/rust-note)
+[![github pages](https://github.com/zjp-CN/rust-note/actions/workflows/gh-pages.yml/badge.svg)](https://github.com/zjp-CN/rust-note/actions/workflows/gh-pages.yml)
 
-You just need to creat md files in `src/` dir, then add the filenames in `SUMMARY.md`,
-and everything is ready to go.
+[这里](https://github.com/zjp-CN/rust-note)主要是笔记文章。
 
-But for the first time after pushing to github, set the source of github page to 
-`gh-pages` branch and `/(root)` in `Settings`.
-
-Have fun with mdbook!
+此外你还可以浏览：
+1. 我的[翻译作品](https://github.com/zjp-CN/translation)
+2. 学习 Rust 以来搜集的[资料](https://www.yuque.com/zhoujiping/programming/rust-materials)
 
