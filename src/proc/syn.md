@@ -18,7 +18,7 @@ syn 主要是一个解析库，用于把 Rust 标记流解析为 Rust 源代码�
     - 几乎所有语法树节点的文档都给出了典型例子或者简明说明，非常易于理解和使用。
 - `#[derive]` 方面：为解析 derive 宏的标记流提供 `syn::DeriveInput` 类型。
 - 解析方面：
-    - `syn::parse::Parse` trait 提供在 `ParseStream` 实例上使用 `.parse()` 方法来解析成实现了此 trait 的基础类型；
+    - [`Parse`] trait 提供对 `ParseStream` 类型使用 `parse` 方法来将其解析成实现了此 trait 的基础（或自定义）类型；
     - syn 提供的每种语法树节点类型都可以单独解析和多项重组，由此轻松构建起全新的自定义语法；
     - 更深入的解析参考 [syn::parse](https://docs.rs/syn/latest/syn/parse/index.html) 模块文档。
 - 位置信息： syn 解析的每个标记都与一个 [`Span`]
