@@ -428,9 +428,8 @@ pub fn my_attribute(args: TokenStream, input: TokenStream) -> TokenStream {
 回顾一下 [`quote::quote!`][`quote!`] 的功能：
 - 它是一个声明宏，其展开的结果是 `proc_macro2::TokenStream` 类型；
 - 它有自己的插值语法 `#( #val ),*`，其中 `,` 是可选的任意分隔符，且 `val` 满足以下一个条件即可：
-    - val 实现了 [`ToTokens`][`quote::ToTokens`] trait
-    - val 实现了 `Iterator` trait
-    - val 是 `Vec` 或 `slice` 或 `BTreeSet` 
+    - val 实现了 `Iterator` trait，且 `Iterator::Item` 实现了 [`ToTokens`][`quote::ToTokens`] trait
+    - val 是 `Vec` 或 `slice` 或 `BTreeSet`，且其元素实现了 [`ToTokens`][`quote::ToTokens`] trait
 
 而 [`quote::quote_spanned!`] 比 `quote!` 增加了 `span=>` 语法，即给生成的标记附带自定义的 [`Span`]。
 
@@ -602,8 +601,6 @@ Expr::Closure(
 ```rust,ignore
 // 以共享引用方式遍历语法树节点
 pub trait Visit<'ast> {
-    /* ... */
-
     fn visit_expr_binary(&mut self, node: &'ast ExprBinary) {
         visit_expr_binary(self, node);
     }
@@ -613,8 +610,6 @@ pub trait Visit<'ast> {
 
 // 以独占引用方式遍历语法树节点
 pub trait VisitMut {
-    /* ... */
-
     fn visit_expr_binary_mut(&mut self, node: &mut ExprBinary) {
         visit_expr_binary_mut(self, node);
     }
@@ -624,8 +619,6 @@ pub trait VisitMut {
 
 // 以所有权方式遍历语法树节点
 pub trait Fold {
-    /* ... */
-
     fn fold_expr_binary(&mut self, node: ExprBinary) -> ExprBinary {
         fold_expr_binary(self, node)
     }
@@ -634,7 +627,7 @@ pub trait Fold {
 }
 ```
 
-[`visit`] 的方式可以在遍历语法树时，把某种节点类型的引用都提取出来， [`visit_mut`] 可以在遍历时修改节点类型，而
+[`visit`] 的方式可以在遍历语法树时，把某种节点类型的引用都提取出来； [`visit_mut`] 可以在遍历时修改节点类型；而
 [`fold`] 可以遍历时消耗某种节点类型来生成这种节点类型。
 
 它们的文档都有最简代码样例，很好理解。其他案例可参考
