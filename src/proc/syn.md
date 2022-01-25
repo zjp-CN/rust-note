@@ -484,7 +484,7 @@ impl ParseQuote for Vec<Stmt> { /* 省略 */ }
 但，这有什么意义呢？
 
 大部分情况下你只需关注和使用 `quote!`，因为它的目的是生成语法标记，也是生成 `proc_macro::TokenStream`
-的最常见方式。（忽略 `proc_macro2::TokenStream` 与 `proc_macro2::TokenStream` 之间的差异，它们之间的转化只需要 `from-into` ）
+的最常见方式。（忽略 `proc_macro::TokenStream` 与 `proc_macro2::TokenStream` 之间的差异，它们之间的转化只需要 `from-into` ）
 
 有些情况下，当你真正需要构造 syn 的某种类型时，尽管那种类型的字段都是公开的，但你很少直接用结构体语法构造它们。
 
