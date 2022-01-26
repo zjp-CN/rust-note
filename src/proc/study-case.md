@@ -28,19 +28,20 @@ macro_rules! assert_sync_dcl {
 
 // 过程宏
 use proc_macro::TokenStream;
+use proc_macro2::TokenStream as TokenStream2;
 use quote::{quote, quote_spanned};
-use syn::{parse_macro_input, spanned::Spanned, TypePath};
 
 #[proc_macro]
 pub fn assert_sync_proc(t: TokenStream) -> TokenStream {
-    let ty = parse_macro_input!(t as TypePath);
+    let ty = TokenStream2::from(t);
     TokenStream::from(quote! {{struct _AssertSync where #ty: Sync;}})
 }
 
-// 与 `assert_sync_proc` 等价（但添加了一些调试打印）
+// 除了 Span 之外，与 `assert_sync_proc` 等价（但添加了一些调试打印）
 #[proc_macro]
 pub fn assert_sync_proc_spanned(t: TokenStream) -> TokenStream {
-    let ty = parse_macro_input!(t as TypePath);
+    use syn::spanned::Spanned;
+    let ty = TokenStream2::from(t);
     let assert_sync = quote_spanned! {ty.span()=>
         {struct _AssertSync where #ty: Sync;}
     };
