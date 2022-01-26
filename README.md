@@ -8,4 +8,5 @@
 此外你还可以浏览：
 1. 我的[翻译作品](https://github.com/zjp-CN/translation)
 2. 学习 Rust 以来搜集的[资料](https://www.yuque.com/zhoujiping/programming/rust-materials)
+3. [neovim0.6-blogs](https://zjp-cn.github.io/neovim0.6-blogs)
 
