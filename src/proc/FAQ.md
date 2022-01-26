@@ -16,7 +16,7 @@ proc-macro = true
 ## 什么是过程宏
 
 - 从形式上看：是带着特定属性的公有函数，其输入为一个或两个 TokenStream，输出是一个 TokenStream
-- 从功能上看：是 AST 到 AST 的函数，即从编译器获取和返还 AST。
+- 从功能上看：是 AST 到 AST 的函数，即从编译器获取和返还 AST
 - 与声明宏的关系：是声明宏的拓展，而非声明宏的替代品
 
 | 类别      | 函数属性                                                                             | 公有函数名              | 函数签名                                    |
@@ -28,7 +28,7 @@ proc-macro = true
 ## 过程宏的优缺点
 
 优点：
-1. 过程宏利用了 Rust 强大的静态类型系统的优势，从而以结构化的方式操作 AST
+1. 过程宏利用了 Rust 强大的静态类型系统的优势，从而以结构化的方式操作语法树
 2. 函数式过程宏可以实现与声明宏相同的功能
 3. derive 式过程宏和属性式过程宏对使用者更加方便
 
@@ -43,7 +43,7 @@ derive 宏所生成代码的代码是附加性质的，通常生成某类型的 
 
 而属性宏更加通用和自由，生成的代码可以是附加或者替换性质的。
 
-## 编写过程宏所涉及 crate
+## 编写过程宏所涉及的 crate
 
 ### `proc_macro`
 
@@ -63,7 +63,7 @@ proc-macro crate 中对过程宏进行打印、调试、测试）。
 
 此外，它提供 `format_ident!` 来方便生成 `proc_macro2::Ident`。
 
-[^proc_macro2::TokenStream]: 它可以使用 `.into()` 转化成 `proc_macro::TokenStream` （过程宏的输出）。
+[^proc_macro2::TokenStream]: 它可以使用 `from-into` 转化成 `proc_macro::TokenStream` （过程宏的输出）。
 
 ### `syn`
 

@@ -52,10 +52,7 @@ use proc_macro::TokenStream;
 pub fn my_macro(input: TokenStream) -> TokenStream {
     // Parse the input tokens into a syntax tree
     let input = syn::parse_macro_input!(input as syn::DeriveInput);
-    TokenStream::from({
-        use quote::ToTokens;
-        input.to_token_stream()
-    })
+    TokenStream::new()
 }
 ```
 
@@ -77,10 +74,7 @@ pub fn my_macro(input: TokenStream) -> TokenStream {
             return ::syn::__private::TokenStream::from(err.to_compile_error());
         }
     };
-    TokenStream::from({
-        use quote::ToTokens;
-        input.to_token_stream()
-    })
+    TokenStream::new()
 }
 
 #const _: () = {
@@ -172,7 +166,7 @@ std、quote、proc_macro2、proc_macro 和 syn 其他模块的 reexport，这印
 
 无论是过程宏还是声明宏，你都会感受到这种写法给你提供便利：在只能定义 item 
 的地方，它给你一个编译期求值的局部作用域，在其中你可以给某个类型实现 trait，而且可以定义不影响源代码的临时
-const 或 type alias。
+const 或 type alias 或数据结构。
 
 在 [proc-macro-workshop] 的最后一个案例 [bitfield] 中，你势必会使用这种技巧。比如[这样][bitfield-spc]或者[这样][bitfield-bit]。
 
@@ -326,7 +320,7 @@ trait：任何使用它的地方，都是使用引用的复制品，而不具有
 
 [^T-P-R]: T 和 P 都为实现了 Parse 的类型，即 `T: Parse`、`P: Parse`；`R` 可为任意类型。
 
-你可以观察到，这些方法都只有 `&self`，而没有 `&mut self`，而且推进游标理应需要独占引用。这是因为 `ParseBuffer`
+你可以观察到，这些方法都只有 `&self`，而没有 `&mut self`，而推进游标理应需要独占引用。这是因为 `ParseBuffer`
 采用了“内部可变性”设计，其背后使用了 [`Cell`]。
 
 [`ParseBuffer`]: https://docs.rs/syn/latest/syn/parse/struct.ParseBuffer.html
@@ -345,7 +339,7 @@ trait：任何使用它的地方，都是使用引用的复制品，而不具有
 但除此之外，你很少直接使用它的方法，也很少关注哪些函数实现了 `Parser` trait。比如 
 [`Parse`] trait 的唯一方法就[实现了][Parse-Parser] `Parser` trait，但你
 [不必写](https://play.rust-lang.org/?version=stable&mode=debug&edition=2021&gist=f3476f9caab9111bd35d1d59328ccde5)
-`Ident::parse.parse2(token_stream)`。
+`ItemStruct::parse.parse2(token_stream)`。
 
 虽然 `Parser` 就是对 `TokenStream -> T` 的抽象（`TokenStream` 来自于过程宏的函数输入参数），而以下实现
 
@@ -491,7 +485,7 @@ impl ParseQuote for Vec<Stmt> { /* 省略 */ }
 假设你想构造闭包表达式  `|| a + b`，它的直接类型是 [`ExprClosure`]，你的函数签名需要
 [`Expr`]，它们之间转化只需要 `from-into`，但你如何得到 `ExprClosure`？
 
-它有 9 个字段，而且 `Punctuated` 类型手动构造起来有些繁琐。
+它有 9 个字段，而且 `Path`、`Punctuated` 类型手动构造起来有些繁琐。
 
 有了 `parse_quote!`，你只需要 `let d: syn::Expr = parse_quote! { || a + b };` 一行语句即可。
 
@@ -576,7 +570,7 @@ Expr::Closure(
 [`syn::buffer`] 模块只有两个结构体：
 - [`TokenBuffer`] 高效多次遍历标记流的缓冲标记流，只有三个公有方法：
     - `fn new(stream: proc_macro::TokenStream) -> Self` 构造缓冲
-    - `fn new2(stream: proc_macro::TokenStream) -> Self` 构造缓冲
+    - `fn new2(stream: proc_macro2::TokenStream) -> Self` 构造缓冲
     - `fn begin(&self) -> Cursor<'_>` 从缓冲的第一个标记位置上产生游标，我们就是利用这个游标遍历缓冲标记流
 - [`Cursor`] 高效复制的游标，是不可变数据（缓冲标记流）的共享引用，其背后是裸指针。
     - 它的亮点是实现了 `Copy` trait，，这意味着你可以隐式复制来驻足在这个游标上。
@@ -585,7 +579,7 @@ Expr::Closure(
     - 两个游标可以比较相等：当它们在同一个标记流中位置相同，且 Span 相同时，两个游标相等。
     - 它属于低层级 API，其大部分方法与 `proc_macro2` 的数据结构有关，所以你想使用它，得掌握 [`TokenTree`]。
 
-通常，你很少关注到这两个类型，但它在 syn 中作为底层数据结构被使用。
+通常，你很少关注到这两个类型，但它们在 syn 中作为底层数据结构被使用。
 
 一个很好的案例是 proc-macro-workshop 的
 `Seq`，你可以参考我的[解答](https://github.com/zjp-CN/proc-macro-workshop/blob/master/seq/src/lib.rs)。

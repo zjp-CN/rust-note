@@ -22,8 +22,7 @@ struct A where SomeType: SomeTrait;
 // 声明宏
 macro_rules! assert_sync_dcl {
     ($t:ty) => {{
-        struct _AssertSync
-            where $t: Sync;
+        struct _AssertSync where $t: Sync;
     }};
 }
 
@@ -35,7 +34,7 @@ use syn::{parse_macro_input, spanned::Spanned, TypePath};
 #[proc_macro]
 pub fn assert_sync_proc(t: TokenStream) -> TokenStream {
     let ty = parse_macro_input!(t as TypePath);
-    quote! {{struct _AssertSync where #ty: Sync;}}.into()
+    TokenStream::from(quote! {{struct _AssertSync where #ty: Sync;}})
 }
 
 // 与 `assert_sync_proc` 等价（但添加了一些调试打印）
@@ -46,8 +45,8 @@ pub fn assert_sync_proc_spanned(t: TokenStream) -> TokenStream {
         {struct _AssertSync where #ty: Sync;}
     };
     // dbg!(&ty);
-    println!("{}", assert_sync);
-    assert_sync.into()
+    // println!("{}", assert_sync);
+    TokenStream::from(assert_sync)
 }
 
 // 使用断言
