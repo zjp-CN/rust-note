@@ -53,35 +53,39 @@ pub fn derive_bitfield_specifier(input: TokenStream) -> TokenStream {
 
 借助 `Iterator` 相关的泛型实现，不难理解下面的代码 —— 把多个 `TokenStream` 汇总成一个 `TokenStream`：
 
-```rust
+```rust,ignore
 use proc_macro2::TokenStream;
+
 fn main() {
     {
         // `Extend<TokenStream>`
         let mut ts = TokenStream::new();
         ts.extend(iter());
-        assert_eq!(count(ts), N);
+        assert_eq!(count(ts), TS);
     }
     {
         // `FromIterator<TokenStream>` + impl<I: Iterator> IntoIterator for I
         let ts = TokenStream::from_iter(iter());
-        assert_eq!(count(ts), N);
+        assert_eq!(count(ts), TS);
     }
     {
         // `FromIterator<TokenStream>` + `Iterator::collect()`
         let ts: TokenStream = iter().collect();
-        assert_eq!(count(ts), N);
+        assert_eq!(count(ts), TS);
     }
     {
         // quote! 的反复插值
-        let iter = 0..N;
-        assert_eq!(count(quote::quote! {#(#iter)*}), N);
+        let iter = iter();
+        assert_eq!(count(quote::quote! {#(#iter)*}), TS);
     }
 }
 
 #const N: usize = 10;
+#const TT: usize = 7;
+#const TS: usize = N * TT;
 #
 #fn f(i: usize) -> TokenStream {
+#    // 这里有 7 个 TokenTree
 #    quote::quote! { const _: usize = #i; }
 #}
 #
