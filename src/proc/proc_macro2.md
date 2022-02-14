@@ -5,8 +5,11 @@
 [`proc_macro`]: https://doc.rust-lang.org/proc_macro/
 [`proc_macro2`]: https://docs.rs/proc-macro2/*/proc_macro2
 
-这两个的库的类型实现了相互实现了 `From`，所以可以**相互转化**。但出于习惯，我们常常使用 `from` 方法，而不使用
+这两个的库的大多类型都相互实现了 `From`，所以可以**相互转化**。但出于习惯[^usually]，我们常常使用 `from` 方法，而不使用
 `into` 方法（当然，你要是想使用 `into` 方法，也没有人会阻止你）。
+
+[^usually]: 仅限于过程宏范畴，因为这一说法来自于我对
+[dtolnay/syn#35b498](https://github.com/dtolnay/syn/commit/35b498ec501b345a57aa0144a9b22d5fa85d7415) 的观察。
 
 我们可以在内部使用 `proc_macro2` 的类型，而在最后的过程宏函数中把 
 `proc_macro2::TokenStream` 转化成 `proc_macro::TokenStream`。
@@ -47,6 +50,45 @@ pub fn derive_bitfield_specifier(input: TokenStream) -> TokenStream {
 - `Extend<TokenTree>`：把多个 `TokenTree` 添加进来
 
 构造 `TokenStream` 并不难，最常用 [`quote::quote!`](./quote.html#quote-与-totokens)。
+
+借助 `Iterator` 相关的泛型实现，不难理解下面的代码 —— 把多个 `TokenStream` 汇总成一个 `TokenStream`：
+
+```rust
+use proc_macro2::TokenStream;
+fn main() {
+    {
+        // `Extend<TokenStream>`
+        let mut ts = TokenStream::new();
+        ts.extend(iter());
+        assert_eq!(count(ts), N);
+    }
+    {
+        // `FromIterator<TokenStream>` + impl<I: Iterator> IntoIterator for I
+        let ts = TokenStream::from_iter(iter());
+        assert_eq!(count(ts), N);
+    }
+    {
+        // `FromIterator<TokenStream>` + `Iterator::collect()`
+        let ts: TokenStream = iter().collect();
+        assert_eq!(count(ts), N);
+    }
+    {
+        // quote! 的反复插值
+        let iter = 0..N;
+        assert_eq!(count(quote::quote! {#(#iter)*}), N);
+    }
+}
+
+#const N: usize = 10;
+#
+#fn f(i: usize) -> TokenStream {
+#    quote::quote! { const _: usize = #i; }
+#}
+#
+#fn iter() -> impl Iterator<Item = TokenStream> { (0usize..N).map(f) }
+#
+#fn count(ts: TokenStream) -> usize { ts.into_iter().count() }
+```
 
 [`TokenStream`]: https://docs.rs/proc-macro2/*/proc_macro2/struct.TokenStream.html
 [`TokenTree`]: https://docs.rs/proc-macro2/*/proc_macro2/enum.TokenTree.html
