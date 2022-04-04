@@ -13,5 +13,7 @@ non-lexical lifetimes are lifetimes that are based on the control-flow graph, ra
 
 borrow checker is that values may not be mutated or moved while they are borrowed
 
+## 发布
 
+https://blog.rust-lang.org/2018/12/06/Rust-1.31-and-rust-2018.html#non-lexical-lifetimes
 
