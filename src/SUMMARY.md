@@ -11,3 +11,4 @@
     - [FAQ](./proc/FAQ.md)
 - [声明宏案例](./dcl.md)
 - [non-lexical lifetimes (NLL)]()
+- [Subtyping and Variance](./subtyping.md)
