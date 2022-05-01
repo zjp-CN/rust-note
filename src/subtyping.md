@@ -19,5 +19,40 @@
 
 variance:
 - is a set of rules governing how subtyping should compose
-- defines situations where subtyping should be disabled.
-- is a property that type constructors have with respect to their arguments.
+- defines situations where subtyping should be disabled
+- is a property that type constructors have with respect to their arguments
+- A type constructor `F`'s variance is how the subtyping of its inputs affects the subtyping of its outputs
+- covariance is, in practical terms, "the" variance
+- Almost all consideration of variance is in terms of whether something should be covariant or invariant
+- witnessing contravariance is quite difficult in Rust, though it does in fact exist
+
+A type constructor:
+- is any generic type with unbound arguments
+- For instance
+    - `Vec` is a type constructor that takes a type `T` and returns `Vec<T>`
+    - `&` and `&mut` are type constructors that take two inputs: a lifetime, and a type to point to
+- For convenience often refer to `F<T>` as a type constructor just so that we can easily talk about `T`
+
+
+| type constructor | variance                                      | the subtyping of its outputs[^given] | memo                             |
+|:----------------:|-----------------------------------------------|--------------------------------------|----------------------------------|
+|      `F<T>`      | covariant                                     | `F<Sub>: F<Super>`                   | subtyping "passes through"       |
+|      `F<T>`      | contravariant                                 | `F<Super>: F<Sub>`                   | subtyping is "inverted"          |
+|      `F<T>`      | invariant                                     | neither the two above                | no subtyping relationship exists |
+|     `F<T, U>`    | covariant over `T` and covariant over `U`     | `F<SubT, SubU>: F<SuperT, SuperU>`   | `F` with a single field          |
+|     `F<T, U>`    | covariant over `T` and contravariant over `U` | `F<SubT, SuperU>: F<SuperT, SubU>`   | `F` with a single field          |
+|     `F<T, U>`    | covariant over `T` and invariant over `U`     | `F<SubT, _>: F<SuperT, _>`           | `F` with a single field          |
+|    `F<A> {..}`   | covariant over `A`                            | all uses of A are covariant          | `F` with one or more fields      |
+|    `F<A> {..}`   | contravariant over `A`                        | all uses of A are contravariant      | `F` with one or more fields      |
+|    `F<A> {..}`   | invariant over `A`                            | neither the two above                | `F` with one or more fields      |
+
+[^given]: given `Sub: Super`
+
+# 参考资料
+
+1. [Reference: subtyping](https://doc.rust-lang.org/reference/subtyping.html)
+2. [Nomicon: subtyping](https://doc.rust-lang.org/nomicon/subtyping.html)
+3. [Crust of Rust: Subtyping and Variance](https://www.youtube.com/watch?v=iVYWDIW71jk)
+4. [Variance in Rust: An intuitive explanation](https://ehsanmkermani.com/2019/03/16/variance-in-rust-an-intuitive-explanation/)
+5. [video: Felix Klock - Subtyping in Rust and Clarke's Third Law](https://www.youtube.com/watch?v=fI4RG_uq-WU) with 
+   [slides](http://pnkfx.org/presentations/rustfest-berlin-2016/slides.html)
