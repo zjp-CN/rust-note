@@ -1,6 +1,6 @@
 # 针对常量泛型参数的分类实现
 
-## 问题
+## 背景与问题
 
 `const` 在 Rust 中是一个关键字，而且总是围绕着常量表达式 ([constant expressions]) 和编译期求值等话题。
 
@@ -47,9 +47,9 @@ impl<const I: i32> Item<I> where I != 0 {}
 
 常量泛型参数 ([const generics parameters])：
 1. 可以在任何 [常量条目][const items] 中使用，而且只能独立使用，通常作为某类型的参数出现。
-2. 作为一种常量上下文 (const context)，只常量表达式和常量函数共存，无法与普通表达式一起使用。
+2. 作为一种常量上下文 (const context)，只与常量表达式和常量函数共存，无法与普通表达式一起使用。
 3. 除非是单路径（单个标识符）或 literal，它必须使用 `{ ... }` 块表达式的形式。
-4. 在单态化之后计算值，这与关联常量 ([associated constants]) 类似
+4. 在单态化之后计算值，这与关联常量 ([associated constants]) 类似。
 
 “单态化”在常量泛型参数中是一个基本视角，这意味着对于 `Item<const I: i32>`，单态化之后的
 `Item<const I = 0>` 和 `Item<const I = 1>` 被认为是两个完全不同的类型。
@@ -126,7 +126,7 @@ error[E0599]: no function or associated item named `fun_for_0` found for struct 
 允许你写出良好形式 ([well-formedness]) 的常量泛型表达式，并且进行常量求值，没有这个功能，
 Rust 只允许 `I` 或者 `{ I }` 这种“简单形式”的表达式。
 
-`I != 0` 是一种良好的形式（当然，常量函数调用也是一种良好的形式），所以我们可以利用常量这样写：
+`I != 0` 是一种良好的形式（当然，常量函数调用也是一种良好的形式），所以我们可以这样写：
 
 ```rust,editable
 // 点击右上角就可以运行代码；你可以直接在网页中编辑这段代码
