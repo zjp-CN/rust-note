@@ -14,4 +14,4 @@
 - [Subtyping and Variance](./subtyping.md)
 - [官方论坛帖子整理](./forum.md)
     - [从同质 variants 取同类型数据](./forum/homo-variant.md)
-    - [常量泛型参数的部分实现](./forum/impl-const-param.md)
+    - [常量泛型参数的分类实现](./forum/impl-const-param.md)
