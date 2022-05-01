@@ -12,3 +12,5 @@
 - [声明宏案例](./dcl.md)
 - [non-lexical lifetimes (NLL)]()
 - [Subtyping and Variance](./subtyping.md)
+- [官方论坛帖子整理](./forum.md)
+    - [常量泛型参数的部分实现](./forum/impl-const-param.md)
