@@ -218,6 +218,8 @@ note: the following trait must be implemented
    | ^^^^^^^^^^^^^^^^
 ```
 
+这里的技巧正是 [const-guards](https://docs.rs/const-guards) crate 用到的。
+
 ## `I == 0` | `I > 0` | `I < 0`
 
 如果我们想对上面的 `const I: i32` 做更多分类呢？或者在这些分类中，我们想要同样的函数名返回不同的类型呢？
@@ -306,6 +308,7 @@ impl<const I: i32> Foo<I> where Check<{ check(I) }>: Equal,
 ## 参考资料
 
 1. Rust User Forum: [Const generics: how to impl “not equal”](https://users.rust-lang.org/t/const-generics-how-to-impl-not-equal/74946/8)
+2. Reference: [const generics parameters]
 
 
 [constant expressions]: https://doc.rust-lang.org/reference/const_eval.html
