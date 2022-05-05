@@ -52,9 +52,9 @@ impl<const I: i32> Item<I> where I != 0 {}
 4. 在单态化之后计算值，这与关联常量 ([associated constants]) 类似。
 
 “单态化”在常量泛型参数中是一个基本视角，这意味着对于 `Item<const I: i32>`，单态化之后的
-`Item<const I = 0>` 和 `Item<const I = 1>` 被认为是两个完全不同的类型。
+`Item<I = 0>` 和 `Item<I = 1>` 被认为是两个完全不同的类型。
 
-而且 trait bounds 并不会考虑常量泛型参数的穷尽，Reference 给了以下一个例子：
+而且 trait bounds 并不会考虑常量泛型参数值的穷尽，Reference 给了以下一个例子：
 
 ```rust
 struct Foo<const B: bool>;
@@ -69,7 +69,11 @@ fn generic<const B: bool>() {
 }
 ```
 
-所以，直接应用 trait bounds 似乎是一个不好的主意。
+你可以尝试一下只实现 `impl<const B: bool> Bar for Foo<B> {}` 会发生什么。
+
+（答案：代码通过。）
+
+从错误报告，我们可以知道，这里的 `Foo<B>`、`Foo<true>` 和 `Foo<false>` 对 trait bounds 来说是完全不同的。
 
 ## `I` 和 `I == 0`
 
@@ -123,7 +127,7 @@ error[E0599]: no function or associated item named `fun_for_0` found for struct 
 提供了一种思路：泛型常量表达式 + trait bounds。
 
 [`#![feature(generic_const_exprs)]`](https://github.com/rust-lang/rust/issues/76560)
-允许你写出良好形式 ([well-formedness]) 的常量泛型表达式，并且进行常量求值，没有这个功能，
+允许你写出形式良好的 ([well-formedness]) 常量泛型表达式，并且进行常量求值，没有这个功能，
 Rust 只允许 `I` 或者 `{ I }` 这种“简单形式”的表达式。
 
 `I != 0` 是一种良好的形式（当然，常量函数调用也是一种良好的形式），所以我们可以这样写：
