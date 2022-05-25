@@ -135,8 +135,8 @@ a > .hljs {
     top: 0;
     bottom: 0;
     margin: 0;
-    max-width: auto;
-    min-width: auto;
+    max-width: 3%;
+    min-width: 3%;
 
     display: flex;
     justify-content: center;
