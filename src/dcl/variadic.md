@@ -202,7 +202,7 @@ fn main() {
 
 这个声明宏十分简单，因为只匹配了一连串逗号分隔的标识符，然后利用反复技巧去展开。
 
-如果你想精简重复的宏调用，或许希望继续写一个宏 `all_tuples!`，然后通过 `all_tuples!(impl_component, 1, 16)` 生成支持 1 ~ 16 个函数参数的实现。
+如果你想精简重复的宏调用，或许希望继续写一个宏 `all_tuples!`，然后通过 `all_tuples! {impl_component, 1, 16, P}` 生成支持 1 ~ 16 个函数参数的实现。
 
 这实际上是 [`bevy::SystemParamFunction`] 的基本思路。如果你已经理解以上内容，那么可以轻松阅读和理解 [那部分源码][SystemParamFunction-src]。
 
@@ -399,7 +399,7 @@ pub trait Component {
 |--------------------------------------|----------------------------------|-----------------------------------------------------------------------------------------------------------|
 | 形式                                 | `trait Component<T, U, ...>`     | 处于 trait 内的 `type T;` 或者 `type U: ...;`                                                             |
 | Reference 链接                       | [generics]                       | [associated-types]                                                                                        |
-| 泛型 -> 具体类型                     | 由使用者决定                     | 由 trait impl 决定（即由实现者确定）                                                                      |
+| 泛型 -> 具体类型                     | 由使用者决定                     | 由 trait impl 决定（即由实现者决定）                                                                      |
 | 抽象性                               | 满足 trait bound 的任意类型      | 从声明的角度看，是满足 trait bound 的任意类型；<br>但从实现的角度看，无抽象，因为关联类型因具体实现而确定 |
 | 使用语法                             | 该 trait 中：直接使用 `T`、`U`   | `Self::T`、`Self::U`、`<Implementator as Trait>::T`                                                       |
 | implementator[^implementator] vs `T` | 一对多[^1vs-]                    | 一对一                                                                                                    |
