@@ -10,6 +10,7 @@
     - [调试](./proc/debug.md)
     - [FAQ](./proc/FAQ.md)
 - [声明宏案例](./dcl.md)
+    - [“变长参数”函数与回调](./dcl/variadic.md)
 - [non-lexical lifetimes (NLL)]()
 - [Subtyping and Variance](./subtyping.md)
 - [官方论坛帖子整理](./forum.md)
