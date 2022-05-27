@@ -18,11 +18,11 @@ Rust 中，“变长参数” (variadic) 总是离不开宏这个话题：众所
 首先，明确我们需要什么[^background]。下面是一个略为复杂的 API 设计：
 
 ```rust,ignore
-memoize(&mut ui, comp2, (2, 3), |_| {});
+memoize(&mut ui, comp_, (...), |_| {});
 // memoize : 提供给使用者的函数
 // &mut ui : 函数的固定参数，或者设计者认为非常重要的参数（在这篇文章中不重要）
-// comp2   : 使用者或者编写者提供的函数（或方法），是本文讨论的回调函数
-// (2, 3)  : 回调函数的参数，对 memoize 来说是“变长的”（是本文的重点）
+// comp_   : 使用者或者编写者提供的函数（或方法），是本文讨论的回调函数
+// (...)   : 回调函数的参数，对 memoize 来说是“变长的”（是本文的重点）
 // |_| {}  : 使用者提供的闭包，它可以提供上下文变量（在这篇文章中不重要）
 ```
 
@@ -345,10 +345,10 @@ memoize(&mut ui, comp_, (&s, vec![&s]), |_| {}); // error[E0597]: `s` does not l
 你可能会考虑到给什么样的函数实现 `Component`：
 
 ```rust,ignore
-impl<F: FnOnce(&mut Ui, ...), ...> Component<...> for F { }
-impl<F: FnMut(&mut Ui, ...), ...> Component<...> for F { }
-impl<F: Fn(&mut Ui, ...), ...> Component<...> for F { }
-impl<...> Component<...> for fn(&mut Ui, ...) { }
+impl<F: FnOnce(&mut Ui, ...), ...> Component<...> for F { } // 或者
+impl<F: FnMut(&mut Ui, ...), ...> Component<...> for F { } // 或者
+impl<F: Fn(&mut Ui, ...), ...> Component<...> for F { } // 或者
+impl<...> Component<...> for fn(&mut Ui, ...) { } // 函数指针
 ```
 
 Rust 可以从多种维度分类和抽象函数：
@@ -421,7 +421,7 @@ pub trait Component {
 完全使用宏（无须定义 `Component` trait），比如这样：
 
 ```rust
-// https://play.rust-lang.org/?version=stable&mode=debug&edition=2021&gist=a467595429ed24281f47498fc8d7b740
+// https://play.rust-lang.org/?version=stable&mode=debug&edition=2021&gist=f44c02fd60a763d30fef5d25d29e7d45
 #![allow(unused)]
 
 pub struct Ui {}
@@ -432,6 +432,7 @@ macro_rules! memoize {
     };
 }
 
+fn comp0(ui: &mut Ui, f: impl FnOnce(&mut Ui)) { f(ui); }
 fn comp_(ui: &mut Ui, a: &str, f: impl FnOnce(&mut Ui)) { f(ui); }
 fn comp4(ui: &mut Ui, a: u8, b: u32, c: u64, d: usize, f: impl FnOnce(&mut Ui)) { f(ui); }
 fn comp12(ui: &mut Ui, p1: u8, p2: u8, p3: u8, p4: u8, p5: u8, p6: u8, p7: u8, p8: u8, p9: u8,
@@ -439,6 +440,7 @@ fn comp12(ui: &mut Ui, p1: u8, p2: u8, p3: u8, p4: u8, p5: u8, p6: u8, p7: u8, p
 
 fn main() {
     let mut ui = Ui {};
+    memoize!(&mut ui, comp0, (), |_| {});
     memoize!(&mut ui, comp_, (""), |_| {});
     memoize!(&mut ui, comp4, (0, 1, 2, 3), |_| {});
     memoize!(&mut ui, comp12, (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), |_| {});
@@ -447,7 +449,7 @@ fn main() {
 
 甚至可以[用宏实现命名和默认参数][Default Arguments]。
 
-此外，还有 2013 年开始提出，但已经搁置的 [RFC: variadic generics]。
+此外，还有 2013 年提出，但已经搁置的 [RFC: variadic generics]。
 
 [Default Arguments]: https://internals.rust-lang.org/t/named-default-arguments-a-review-proposal-and-macro-implementation
 [RFC: variadic generics]: https://github.com/rust-lang/rfcs/issues/376
