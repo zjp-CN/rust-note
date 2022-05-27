@@ -304,7 +304,7 @@ where
   error[E0277]: can't compare `(u8, u8, u8, u8, u8, u8, u8, u8, u8, u8, u8, u8, u8)` with `(u8, u8, u8, u8, u8, u8, u8, u8, u8, u8, u8, u8, u8)`
    --> src/main.rs
     |
-    | memoize(&mut ui, comp13, (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),                                                                            | _ | {});
+    | memoize(&mut ui, comp13, (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), | _ | {});
     | ^^^^^^^ no implementation for `(u8, u8, u8, u8, u8, u8, u8, u8, u8, u8, u8, u8, u8) == (u8, u8, u8, u8, u8, u8, u8, u8, u8, u8, u8, u8, u8)`
   ```
 
@@ -326,7 +326,7 @@ where
 ```rust,ignore
 fn comp_(ui: &mut Ui, a: &str, b: Vec<&str>, f: impl FnOnce(&mut Ui)) { f(ui); }
 // 实际上，由于 `P: 'static`，a 必须是 &'static str， b 必须是 Vec<'static str>
-memoize(&mut ui, comp_, ("", vec![""]), |_| {}); 
+memoize(&mut ui, comp_, ("", vec![""]), |_| {}); // ok
 
 let s = String::from(""); // 生命周期不是 'static
 memoize(&mut ui, comp_, (&s, vec![&s]), |_| {}); // error[E0597]: `s` does not live long enough
@@ -402,7 +402,7 @@ pub trait Component {
 | 泛型 -> 具体类型                     | 由使用者决定                     | 由 trait impl 决定（即由实现者决定）                                                                      |
 | 抽象性                               | 满足 trait bound 的任意类型      | 从声明的角度看，是满足 trait bound 的任意类型；<br>但从实现的角度看，无抽象，因为关联类型因具体实现而确定 |
 | 使用语法                             | 该 trait 中：直接使用 `T`、`U`   | `Self::T`、`Self::U`、`<Implementator as Trait>::T`                                                       |
-| implementator[^implementator] vs `T` | 一对多[^1vs-]                    | 一对一                                                                                                    |
+| implementator[^implementator] vs `T` | 一对多[^1vs-]                    | 一对一[^1vs1]                                                                                                    |
 | 类型推断                             | 通常要指明类型                   | 容易直接推断，因为一经实现，类型是固定的                                                                  |
 | 方法（函数）                         | 泛型方法（由 trait bounds 提供） | 具体类型的方法（函数）                                                                                    |
 
