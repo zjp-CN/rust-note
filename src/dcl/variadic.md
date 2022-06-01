@@ -243,7 +243,7 @@ impl Parse for Input {
         let _: Comma = input.parse()?;
         let start    = input.parse::<LitInt>()?.base10_parse()?;
         let _: Comma = input.parse()?;
-        let end:     = input.parse::<LitInt>()?.base10_parse()?;
+        let end      = input.parse::<LitInt>()?.base10_parse()?;
         let _: Comma = input.parse()?;
         let ident    = input.parse()?;
         Ok(Input { name, start, end, ident })
@@ -253,7 +253,7 @@ impl Parse for Input {
 
 宏充满了技巧，这需要观察和练习。如果你感兴趣的话，使用这段代码的展开结果[见此处][expanded]。
 
-当然，如果你的宏代码不够通用（不必复用），可以把这两个宏合并成一个宏。
+当然，如果你的宏代码不够通用（不必复用），可以把这两个宏合并成一个宏。完整项目代码见[此处](https://github.com/zjp-CN/rust-note/tree/main/src/dcl/variadic)。
 
 然而，我想提醒你的是，本文的核心技巧是 trait 和泛型参数，宏只是锦上添花的内容。
 
