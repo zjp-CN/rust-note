@@ -123,6 +123,8 @@ error[E0599]: no function or associated item named `fun_for_0` found for struct 
 
 ## `I != 0`
 
+### 方法一
+
 [@Michael Bryan](https://users.rust-lang.org/t/const-generics-how-to-impl-not-equal/74946/4)
 提供了一种思路：泛型常量表达式 + trait bounds。
 
@@ -223,6 +225,61 @@ note: the following trait must be implemented
 ```
 
 这里的技巧正是 [const-guards](https://docs.rs/const-guards) crate 用到的。
+
+### 方法二
+
+[@Yandros](https://users.rust-lang.org/t/how-do-i-static-assert-a-property-of-a-generic-u32-parameter/76307/8)
+提出另一种思路，使用零大小类型和关联常量：
+
+```rust
+#![feature(generic_const_exprs)]
+#![allow(incomplete_features)]
+
+struct Item<const I: i32> {}
+
+#[allow(dead_code)]
+struct Assert<const I: i32>;
+
+#[allow(dead_code)]
+impl<const I: i32> Assert<I> {
+    const OK: usize = {
+        assert!(I != 0);
+        0
+    };
+}
+
+impl<const I: i32> Item<I> where [(); Assert::<{ I }>::OK]:
+{
+    fn for_non_zero() {}
+}
+
+fn main() {
+    Item::<1>::for_non_zero();
+    // 下面这一行代码导致编译错误
+    Item::<0>::for_non_zero();
+}
+```
+
+错误报告也很直观：
+
+```rust
+error[E0080]: evaluation of `Assert::<0_i32>::OK` failed
+  --> src/main.rs:12:9
+   |
+12 |         assert!(I != 0);
+   |         ^^^^^^^^^^^^^^^ the evaluated program panicked at 'assertion failed: I != 0', src/main.rs:12:9
+   |
+   = note: this error originates in the macro `assert` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0599]: no function or associated item named `for_non_zero` found for struct `Item<0_i32>` in the current scope
+  --> src/main.rs:25:16
+   |
+4  | struct Item<const I: i32> {}
+   | ------------------------- function or associated item `for_non_zero` not found for this
+...
+25 |     Item::<0>::for_non_zero();
+   |                ^^^^^^^^^^^^ function or associated item cannot be called on `Item<0_i32>` due to unsatisfied trait bounds
+```
 
 ## `I == 0` | `I > 0` | `I < 0`
 
