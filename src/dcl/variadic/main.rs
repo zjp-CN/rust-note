@@ -1,6 +1,11 @@
 #![allow(unused)]
 
 pub struct Ui {}
+impl Ui {
+    pub fn update<T>(&mut self, a: String, b: Vec<T>, f: impl FnOnce(&mut Ui))
+        where T: PartialEq + Clone + 'static {
+    }
+}
 
 pub trait Component<Params, Content> {
     fn call(&self, ui: &mut Ui, params: Params, content: Content);
@@ -30,4 +35,7 @@ fn main() {
     memoize(&mut ui, comp2, (2, 3), |_| {});
     memoize(&mut ui, comp3, (1, 2, 3), |_| {});
     memoize(&mut ui, comp4, (0, 1, 2, 3), |_| {});
+
+    let args = (String::new(), vec![(1usize, 1.0f64)]);
+    memoize(&mut ui, Ui::update, args, |_| {});
 }
