@@ -253,7 +253,9 @@ impl Parse for Input {
 
 宏充满了技巧，这需要观察和练习。如果你感兴趣的话，使用这段代码的展开结果[见此处][expanded]。
 
-当然，如果你的宏代码不够通用（不必复用），可以把这两个宏合并成一个宏。完整项目代码见[此处](https://github.com/zjp-CN/rust-note/tree/main/src/dcl/variadic)。
+当然，如果你的宏代码不够通用（不必复用），可以把这两个宏合并成一个宏：
+* 整合声明宏和过程宏的代码见[此处](https://github.com/zjp-CN/rust-note/tree/main/src/dcl/variadic)
+* 只使用声明宏的代码见[此处](https://github.com/zjp-CN/rust-note/tree/main/src/dcl/variadic-dcl)，此技巧受标准库[这段][std-dcl]代码的启发
 
 然而，我想提醒你的是，本文的核心技巧是 trait 和泛型参数，宏只是锦上添花的内容。
 
@@ -261,6 +263,7 @@ impl Parse for Input {
 [`bevy::SystemParamFunction`]: https://docs.rs/bevy/latest/bevy/ecs/system/trait.SystemParamFunction.html
 [SystemParamFunction-src]: https://github.com/bevyengine/bevy/blob/fed93a0edce9d66586dc70c1207a2092694b9a7d/crates/bevy_ecs/src/system/function_system.rs#L492-L541
 [`bevy::all_tuples!`]: https://github.com/bevyengine/bevy/blob/fed93a0edce9d66586dc70c1207a2092694b9a7d/crates/bevy_ecs/macros/src/lib.rs#L48-L81
+[std-dcl]: https://github.com/rust-lang/rust/blob/e40d5e83dc133d093c22c7ff016b10daa4f40dcf/library/core/src/array/mod.rs#L371-L394
 
 ## 细节
 
