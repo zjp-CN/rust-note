@@ -402,16 +402,16 @@ pub trait Component {
 
 我总结了以下表格，也可以参考 [某则帖子][generics_AT] 对具体的 `Iterator` 进行类型参数还是关联类型抽象的讨论。
 
-| 角度                                 | 类型参数  `T`、`U`               | 关联类型 `T`、`U` （不考虑 GAT）                                                                          |
-|--------------------------------------|----------------------------------|-----------------------------------------------------------------------------------------------------------|
-| 形式                                 | `trait Component<T, U, ...>`     | 处于 trait 内的 `type T;` 或者 `type U: ...;`                                                             |
-| Reference 链接                       | [generics]                       | [associated-types]                                                                                        |
-| 泛型 -> 具体类型                     | 由使用者决定                     | 由 trait impl 决定（即由实现者决定）                                                                      |
-| 抽象性                               | 满足 trait bound 的任意类型      | 从声明的角度看，是满足 trait bound 的任意类型；<br>但从实现的角度看，无抽象，因为关联类型因具体实现而确定 |
-| 使用语法                             | 该 trait 中：直接使用 `T`、`U`   | `Self::T`、`Self::U`、`<Implementator as Trait>::T`                                                       |
-| implementator[^implementator] vs `T` | 一对多[^1vs-]                    | 一对一[^1vs1]                                                                                                    |
-| 类型推断                             | 通常要指明类型                   | 容易直接推断，因为一经实现，类型是固定的                                                                  |
-| 方法（函数）                         | 泛型方法（由 trait bounds 提供） | 具体类型的方法（函数）                                                                                    |
+| 角度                                 | 类型参数  `T`、`U`                 | 关联类型 `T`、`U` （不考虑 GAT）                                                                          |
+|--------------------------------------|------------------------------------|-----------------------------------------------------------------------------------------------------------|
+| 形式                                 | `trait Trait<T, U: Bounds>`        | 处于 trait 内的 `type T;` 或者 `type U: Bounds;`                                                          |
+| Reference 链接                       | [generics]                         | [associated-types]                                                                                        |
+| 泛型 -> 具体类型                     | 由 trait impl 决定，但由使用者选择 | 由 trait impl 决定和选择                                                                                  |
+| 抽象性                               | 满足 trait bound 的任意类型        | 从声明的角度看，是满足 trait bound 的任意类型；<br>但从实现的角度看，无抽象，因为关联类型因具体实现而确定 |
+| 使用语法                             | 该 trait 中：直接使用 `T`、`U`     | `Self::T`、`Self::U`、`<Implementator as Trait>::T`                                                       |
+| implementator[^implementator] vs `T` | 一对多[^1vs-]                      | 一对一[^1vs1]                                                                                             |
+| 类型推断                             | 通常要指明类型                     | 容易直接推断，因为一经实现，类型是固定的                                                                  |
+| 方法                                 | 由 trait bounds 提供泛型方法       | 默认实现时由 trait bounds 提供泛型方法；覆盖实现时由具体类型提供方法                                      |
 
 [^implementator]: 实现 trait 的类型：比如 `impl AsRef<[u8]> for str` 中，`str` 就叫做 implementator。
 
