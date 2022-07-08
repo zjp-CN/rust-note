@@ -117,4 +117,4 @@ more info)
 文档的启发， `quote::quote_spanned!` 和 `quote::quote!` 在这的功能一致。
 
 [^assert_sync2]: 在编译时做出断言是这个例子的另一大亮点，利用类似的技巧，可以做出很多静态断言，参考 
-[`static_assertions`](`https://docs.rs/static_assertions/latest/static_assertions/`) crate。
+[`static_assertions`](https://docs.rs/static_assertions/latest/static_assertions/) crate。
