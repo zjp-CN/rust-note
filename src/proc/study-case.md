@@ -2,10 +2,10 @@
 
 ## `assert_sync!` 
 
-这是一个基础案例[^assert_sync1]，目的是在编译期间[^assert_sync2]测试某个类型是否实现了 `sync`。
+这是一个基础案例[^assert_sync1]，目的是在编译期间[^assert_sync2]测试某个类型是否实现了 `Sync`。
 
-[`sync`](https://doc.rust-lang.org/std/marker/trait.Sync.html) trait
-表示该类型能在不同的线程之间安全地共享引用。当编译器确定某类型合适的话，那么会自动实现 `sync`。
+[`Sync`](https://doc.rust-lang.org/std/marker/trait.Sync.html) trait
+表示该类型能在不同的线程之间安全地共享引用。当编译器确定某类型合适的话，那么会自动实现 `Sync`。
 
 这里基于最基础的语法：声明泛型[结构体](https://doc.rust-lang.org/nightly/reference/items/structs.html)来实现编译期断言。
 
