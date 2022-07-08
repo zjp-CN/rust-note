@@ -114,7 +114,7 @@ more info)
 两种方法都能把主要的错误准确报告出来：`Rc<u8> cannot be shared between threads safely`。
 
 [^assert_sync1]: 该例子受 [`quote::quote_spanned!`](https://docs.rs/quote/latest/quote/macro.quote_spanned.html#example) 
-文档的启发， `quote::quote_spanned!` 和 `quote::quote!` 在这的功能一致。
+文档的启发。
 
 [^assert_sync2]: 在编译时做出断言是这个例子的另一大亮点，利用类似的技巧，可以做出很多静态断言，参考 
 [`static_assertions`](https://docs.rs/static_assertions/latest/static_assertions/) crate。
