@@ -340,7 +340,10 @@ Alternatives for fuzzing: [Rust Fuzz Book](https://rust-fuzz.github.io/book/intr
 3. Rust serialization: What’s ready for production today?（2020）：[https://blog.logrocket.com/rust-serialization-whats-ready-for-production-today/](https://blog.logrocket.com/rust-serialization-whats-ready-for-production-today/)
 3. Benchmarking different Rust generator libraries in a real world use case.：[https://github.com/Tuupertunut/rust-generator-benchmark](https://github.com/Tuupertunut/rust-generator-benchmark)
 3. Rust JSON (Parsing) Benchmark：[https://github.com/serde-rs/json-benchmark](https://github.com/serde-rs/json-benchmark)
+4. Bechmarks for Rust big integer implementations：<https://github.com/tczajka/bigint-benchmark-rs>
+
 # 个人博客
+
 网址后面是我总结的关键词（不保证准确），所有博客的地址来自于寻找 Rust 资料时顺便搜集的：
 
 1. ❤ **Educational blog posts for Rust beginners and advanced beginners：**[https://github.com/pretzelhammer/rust-blog](https://github.com/pretzelhammer/rust-blog)：最热门的一篇莫过于《理解生命周期的十个误区》
