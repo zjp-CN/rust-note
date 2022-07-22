@@ -22,7 +22,7 @@ fn return_static__ref_none() -> &'static Enum { &None }
 ```
 
 换言之，对于 `let x: &u32 = &42;` 数据 `42` 被放置在栈上，而 `let x: &'static u32 = &42;` 则把数据 `42`
-放置于静态内存，所以显然后者的生命周期可以前者长，这对于返回 `&'static T` 的函数来说尤其有用。
+放置于静态内存，所以显然后者的生命周期可以比前者长，这对于返回 `&'static T` 的函数来说尤其有用。
 
 此外，RFC 还总结了一条规则：
 
@@ -172,15 +172,15 @@ const fn size_of<T>() -> usize { std::mem::size_of::<T>() }
 
 这其实是实施静态提升功能前的做法，所以这是最基本的办法。
 
-缺点在于，如果碰到 `fn f<T>() -> &'static ...` 这种待类型参数的函数，其函数内部无法使用 constants（
+缺点在于，如果碰到 `fn f<T>() -> &'static ...` 这带类型参数的函数，其函数内部无法使用 constants（
 [vtable 例子](https://play.rust-lang.org/?version=stable&mode=debug&edition=2021&gist=0abfbff9738af2fcfb4f36b310c51fe8) ）。
 
 ```rust,editable
 // 此代码块可直接编辑
 
 fn f<T>() -> &'static usize {
-    const X: usize = size_of::<T>();
     // error[E0401]: can't use generic parameters from outer function
+    const X: usize = size_of::<T>();
     &X
 }
 
