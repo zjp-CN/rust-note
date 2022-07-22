@@ -16,3 +16,5 @@
 - [官方论坛帖子整理](./forum.md)
     - [从同质 variants 取同类型数据](./forum/homo-variant.md)
     - [常量泛型参数的分类实现](./forum/impl-const-param.md)
+    - [如何理解生命周期与型变]()
+    - [静态生命周期提升](./forum/static-promotion.md)
