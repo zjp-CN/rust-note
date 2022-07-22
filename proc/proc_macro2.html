@@ -1,0 +1,301 @@
+<!DOCTYPE HTML>
+<html lang="zh" class="sidebar-visible no-js ayu">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>proc_macro2 - rust-note</title>
+        <!-- Custom HTML head -->
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/pagetoc.css">
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "ayu";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('ayu')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../index.html"><strong aria-hidden="true">1.</strong> README</a></li><li class="chapter-item expanded "><a href="../proc-macro-note.html"><strong aria-hidden="true">2.</strong> 过程宏</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../proc/ref.html"><strong aria-hidden="true">2.1.</strong> 基础内容</a></li><li class="chapter-item expanded "><a href="../proc/quote.html"><strong aria-hidden="true">2.2.</strong> quote</a></li><li class="chapter-item expanded "><a href="../proc/syn.html"><strong aria-hidden="true">2.3.</strong> syn</a></li><li class="chapter-item expanded "><a href="../proc/proc_macro2.html" class="active"><strong aria-hidden="true">2.4.</strong> proc_macro2</a></li><li class="chapter-item expanded "><a href="../proc/study-case.html"><strong aria-hidden="true">2.5.</strong> 案例</a></li><li class="chapter-item expanded "><a href="../proc/debug.html"><strong aria-hidden="true">2.6.</strong> 调试</a></li><li class="chapter-item expanded "><a href="../proc/FAQ.html"><strong aria-hidden="true">2.7.</strong> FAQ</a></li></ol></li><li class="chapter-item expanded "><a href="../dcl.html"><strong aria-hidden="true">3.</strong> 声明宏案例</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../dcl/variadic.html"><strong aria-hidden="true">3.1.</strong> “变长参数”函数与回调</a></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">4.</strong> non-lexical lifetimes (NLL)</div></li><li class="chapter-item expanded "><a href="../subtyping.html"><strong aria-hidden="true">5.</strong> Subtyping and Variance</a></li><li class="chapter-item expanded "><a href="../forum.html"><strong aria-hidden="true">6.</strong> 官方论坛帖子整理</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../forum/homo-variant.html"><strong aria-hidden="true">6.1.</strong> 从同质 variants 取同类型数据</a></li><li class="chapter-item expanded "><a href="../forum/impl-const-param.html"><strong aria-hidden="true">6.2.</strong> 常量泛型参数的分类实现</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.3.</strong> 如何理解生命周期与型变</div></li><li class="chapter-item expanded "><a href="../forum/static-promotion.html"><strong aria-hidden="true">6.4.</strong> 静态生命周期提升</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu (default)</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">rust-note</h1>
+
+                    <div class="right-buttons">
+                        <a href="https://github.com/zjp-CN/rust-note" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <h1 id="proc_macro2"><a class="header" href="#proc_macro2">proc_macro2</a></h1>
+<p><a href="https://docs.rs/proc-macro2/*/proc_macro2"><code>proc_macro2</code></a> 是对 <a href="https://doc.rust-lang.org/proc_macro/"><code>proc_macro</code></a> 的包装，因为后者只能用在 proc-macro crate 中。</p>
+<p>这两个的库的大多类型都相互实现了 <code>From</code>，所以可以<strong>相互转化</strong>。但出于习惯<sup class="footnote-reference"><a href="#usually">1</a></sup>，我们常常使用 <code>from</code> 方法，而不使用
+<code>into</code> 方法（当然，你要是想使用 <code>into</code> 方法，也没有人会阻止你）。</p>
+<div class="footnote-definition" id="usually"><sup class="footnote-definition-label">1</sup>
+<p>仅限于过程宏范畴，因为这一说法来自于我对
+<a href="https://github.com/dtolnay/syn/commit/35b498ec501b345a57aa0144a9b22d5fa85d7415">dtolnay/syn#35b498</a> 的观察。</p>
+</div>
+<p>我们可以在内部使用 <code>proc_macro2</code> 的类型，而在最后的过程宏函数中把 
+<code>proc_macro2::TokenStream</code> 转化成 <code>proc_macro::TokenStream</code>。</p>
+<pre><code class="language-rust ignore"><span class="boring">// src: https://github.com/zjp-CN/proc-macro-workshop/blob/master/bitfield/impl/src/lib.rs
+</span>use proc_macro::TokenStream;
+
+#[proc_macro_attribute]
+pub fn bitfield(_: TokenStream, input: TokenStream) -&gt; TokenStream {
+    let input = syn::parse_macro_input!(input as syn::Item);
+    TokenStream::from(bit::expand(input))
+}
+
+#[proc_macro]
+pub fn gen(_: TokenStream) -&gt; TokenStream {
+    TokenStream::from(gen::generate()) 
+}
+
+#[proc_macro_derive(BitfieldSpecifier)]
+pub fn derive_bitfield_specifier(input: TokenStream) -&gt; TokenStream {
+    let input = syn::parse_macro_input!(input as syn::ItemEnum);
+    TokenStream::from(spe::derive_bitfield_specifier_for_enum(input))
+}
+</code></pre>
+<p>接下来讨论 <code>TokenStream</code> 和 <code>TokenTree</code>。</p>
+<h2 id="tokenstream"><a class="header" href="#tokenstream"><code>TokenStream</code></a></h2>
+<p><a href="https://docs.rs/proc-macro2/*/proc_macro2/struct.TokenStream.html"><code>TokenStream</code></a> 的 <a href="https://doc.rust-lang.org/nightly/reference/glossary.html#inherent-method">inherent</a> 方法很少，只有 <code>fn new() -&gt; Self</code> 和
+<code>fn is_empty(&amp;self) -&gt; bool</code>。更重要的是其 trait 实现：</p>
+<ul>
+<li><code>IntoIterator</code>：从 <code>TokenStream</code> 到 <a href="https://docs.rs/proc-macro2/*/proc_macro2/enum.TokenTree.html"><code>TokenTree</code></a> 只需要 <code>.into_iter()</code></li>
+<li><code>FromIterator&lt;TokenStream&gt;</code>：把多个 <code>TokenStream</code> 汇聚成一个 <code>TokenStream</code></li>
+<li><code>FromIterator&lt;TokenTree&gt;</code>：把多个 <code>TokenTree</code> 汇聚成一个 <code>TokenStream</code></li>
+<li><code>Extend&lt;TokenStream&gt;</code>：把多个 <code>TokenStream</code> 添加进来</li>
+<li><code>Extend&lt;TokenTree&gt;</code>：把多个 <code>TokenTree</code> 添加进来</li>
+</ul>
+<p>构造 <code>TokenStream</code> 并不难，最常用 <a href="./quote.html#quote-%E4%B8%8E-totokens"><code>quote::quote!</code></a>。</p>
+<p>借助 <code>Iterator</code> 相关的泛型实现，不难理解下面的代码 —— 把多个 <code>TokenStream</code> 汇总成一个 <code>TokenStream</code>：</p>
+<pre><code class="language-rust ignore">use proc_macro2::TokenStream;
+
+fn main() {
+    {
+        // `Extend&lt;TokenStream&gt;`
+        let mut ts = TokenStream::new();
+        ts.extend(iter());
+        assert_eq!(count(ts), TS);
+    }
+    {
+        // `FromIterator&lt;TokenStream&gt;` + impl&lt;I: Iterator&gt; IntoIterator for I
+        let ts = TokenStream::from_iter(iter());
+        assert_eq!(count(ts), TS);
+    }
+    {
+        // `FromIterator&lt;TokenStream&gt;` + `Iterator::collect()`
+        let ts: TokenStream = iter().collect();
+        assert_eq!(count(ts), TS);
+    }
+    {
+        // quote! 的反复插值
+        let iter = iter();
+        assert_eq!(count(quote::quote! {#(#iter)*}), TS);
+    }
+}
+
+<span class="boring">const N: usize = 10;
+</span><span class="boring">const TT: usize = 7;
+</span><span class="boring">const TS: usize = N * TT;
+</span><span class="boring">
+</span><span class="boring">fn f(i: usize) -&gt; TokenStream {
+</span><span class="boring">   // 这里有 7 个 TokenTree
+</span><span class="boring">   quote::quote! { const _: usize = #i; }
+</span><span class="boring">}
+</span><span class="boring">
+</span><span class="boring">fn iter() -&gt; impl Iterator&lt;Item = TokenStream&gt; { (0usize..N).map(f) }
+</span><span class="boring">
+</span><span class="boring">fn count(ts: TokenStream) -&gt; usize { ts.into_iter().count() }
+</span></code></pre>
+<h2 id="tokentree"><a class="header" href="#tokentree"><code>TokenTree</code></a></h2>
+<p><a href="https://docs.rs/proc-macro2/*/proc_macro2/enum.TokenTree.html"><code>TokenTree</code></a> 是一个枚举体，它描述一个标记的类别：</p>
+<pre><code class="language-rust ignore">pub enum TokenTree {
+    Group(Group),
+    Ident(Ident),
+    Punct(Punct),
+    Literal(Literal),
+}
+</code></pre>
+<div class="table-wrapper"><table><thead><tr><th>类型</th><th>含义</th></tr></thead><tbody>
+<tr><td><a href="https://docs.rs/proc-macro2/*/proc_macro2/struct.Group.html"><code>Group</code></a></td><td>由 <code>{}</code>、 <code>()</code>、 <code>[]</code> 等<a href="https://docs.rs/proc-macro2/*/proc_macro2/enum.Delimiter.html">分隔</a>出来的标记（包括两侧的括号分隔符）</td></tr>
+<tr><td><a href="https://docs.rs/proc-macro2/*/proc_macro2/struct.Ident.html"><code>Ident</code></a></td><td>一个标识符，比如 <code>ABC</code>、 <code>_</code>、 <code>let</code></td></tr>
+<tr><td><a href="https://docs.rs/proc-macro2/*/proc_macro2/struct.Punct.html"><code>Punct</code></a></td><td>一个标点，比如 <code>+</code>、 <code>,</code>、 <code>$</code></td></tr>
+<tr><td><a href="https://docs.rs/proc-macro2/*/proc_macro2/struct.Literal.html"><code>Literal</code></a></td><td>一个字面值，比如字符 <code>'a'</code>、字符串 <code>&quot;hello&quot;</code>、数字 <code>2.3f64</code></td></tr>
+</tbody></table>
+</div>
+<p>你很少自己通过 <code>TokenTree</code> 解析标记，因为 <a href="https://docs.rs/syn"><code>syn</code></a> 提供大量基础而通用的节点类型，它们都实现了 <a href="./syn.html#parse-trait"><code>Parse</code></a> trait。</p>
+<p>一个很好的必须使用 <code>TokenTree</code> 的案例是 proc-macro-workshop 的
+<code>Seq</code>，你可以参考我的<a href="https://github.com/zjp-CN/proc-macro-workshop/blob/master/seq/src/lib.rs">解答</a>。</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../proc/syn.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                            <a rel="next" href="../proc/study-case.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../proc/syn.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                    <a rel="next" href="../proc/study-case.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        <script src="../ace.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../editor.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../mode-rust.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../theme-dawn.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../theme-tomorrow_night.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../searcher.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+        <script type="text/javascript" src="../theme/pagetoc.js"></script>
+    </body>
+</html>

@@ -1,0 +1,487 @@
+<!DOCTYPE HTML>
+<html lang="zh" class="sidebar-visible no-js ayu">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>基础内容 - rust-note</title>
+        <!-- Custom HTML head -->
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/pagetoc.css">
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "ayu";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('ayu')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../index.html"><strong aria-hidden="true">1.</strong> README</a></li><li class="chapter-item expanded "><a href="../proc-macro-note.html"><strong aria-hidden="true">2.</strong> 过程宏</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../proc/ref.html" class="active"><strong aria-hidden="true">2.1.</strong> 基础内容</a></li><li class="chapter-item expanded "><a href="../proc/quote.html"><strong aria-hidden="true">2.2.</strong> quote</a></li><li class="chapter-item expanded "><a href="../proc/syn.html"><strong aria-hidden="true">2.3.</strong> syn</a></li><li class="chapter-item expanded "><a href="../proc/proc_macro2.html"><strong aria-hidden="true">2.4.</strong> proc_macro2</a></li><li class="chapter-item expanded "><a href="../proc/study-case.html"><strong aria-hidden="true">2.5.</strong> 案例</a></li><li class="chapter-item expanded "><a href="../proc/debug.html"><strong aria-hidden="true">2.6.</strong> 调试</a></li><li class="chapter-item expanded "><a href="../proc/FAQ.html"><strong aria-hidden="true">2.7.</strong> FAQ</a></li></ol></li><li class="chapter-item expanded "><a href="../dcl.html"><strong aria-hidden="true">3.</strong> 声明宏案例</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../dcl/variadic.html"><strong aria-hidden="true">3.1.</strong> “变长参数”函数与回调</a></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">4.</strong> non-lexical lifetimes (NLL)</div></li><li class="chapter-item expanded "><a href="../subtyping.html"><strong aria-hidden="true">5.</strong> Subtyping and Variance</a></li><li class="chapter-item expanded "><a href="../forum.html"><strong aria-hidden="true">6.</strong> 官方论坛帖子整理</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../forum/homo-variant.html"><strong aria-hidden="true">6.1.</strong> 从同质 variants 取同类型数据</a></li><li class="chapter-item expanded "><a href="../forum/impl-const-param.html"><strong aria-hidden="true">6.2.</strong> 常量泛型参数的分类实现</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.3.</strong> 如何理解生命周期与型变</div></li><li class="chapter-item expanded "><a href="../forum/static-promotion.html"><strong aria-hidden="true">6.4.</strong> 静态生命周期提升</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu (default)</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">rust-note</h1>
+
+                    <div class="right-buttons">
+                        <a href="https://github.com/zjp-CN/rust-note" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <h1 id="基础内容"><a class="header" href="#基础内容">基础内容</a></h1>
+<blockquote>
+<p>此部分内容翻译和整理自：<a href="https://doc.rust-lang.org/nightly/reference/procedural-macros.html">reference#procedural-macros</a></p>
+</blockquote>
+<h2 id="过程宏是什么"><a class="header" href="#过程宏是什么">过程宏是什么</a></h2>
+<p>过程宏必须定义在 <code>proc-macro</code> 类型的库：</p>
+<pre><code class="language-toml">[lib]
+proc-macro = true
+</code></pre>
+<p>使用过程宏的目的是：在编译期间操作 Rust 的语法，包括消耗和生成 Rust 语法。</p>
+<p>过程宏被视为从一个 AST 到另一个 AST 的函数。</p>
+<p>像函数一样，过程宏：</p>
+<ol>
+<li>要么返回语法：替换或者删除语法</li>
+<li>要么导致 panic：编译器捕获这些 panic，并将其转化为编译器的错误信息</li>
+<li>要么一直循环：让编译器处于挂起状态 (hanged)</li>
+</ol>
+<p>过程宏享受与编译器相同的资源，可以：</p>
+<ol>
+<li>访问编译器才能访问的标准输入/输出/错误 ；</li>
+<li>可以访问编译期间生成的文件（如同 <a href="https://doc.rust-lang.org/nightly/cargo/reference/build-scripts.html"><code>build.rs</code></a> 一样）。</li>
+</ol>
+<p>过程宏报告错误的方式：</p>
+<ol>
+<li>panic</li>
+<li>调用 <a href="https://doc.rust-lang.org/nightly/std/macro.compile_error.html"><code>compile_error</code></a></li>
+</ol>
+<h2 id="proc_macro-crate"><a class="header" href="#proc_macro-crate"><code>proc_macro</code> crate</a></h2>
+<p><a href="https://doc.rust-lang.org/nightly/proc_macro/index.html"><code>proc_macro</code></a> 是 Rust 编译器所提供的，提供了编写过程宏所需的类型和工具。</p>
+<ol>
+<li><a href="https://doc.rust-lang.org/nightly/proc_macro/struct.TokenStream.html"><code>TokenStream</code></a>
+类型是一系列标记，用于迭代 token trees 或者从 token trees 聚集到一起。它几乎等价于 
+<code>Vec&lt;TokenTree&gt;</code>（但它的 clone 是低成本的），其中 
+<a href="https://doc.rust-lang.org/nightly/proc_macro/enum.TokenTree.html"><code>TokenTree</code></a>
+几乎可以被视为词法标记 (lexical token)。</li>
+<li><a href="https://doc.rust-lang.org/proc_macro/struct.Span.html"><code>Span</code></a>
+表示源代码的范围，而且它主要用于报告错误。所有的标记都伴随着一个 <code>Span</code>，你不能修改 
+<code>Span</code>，但是可以生成 <code>Span</code>。</li>
+</ol>
+<h2 id="卫生性"><a class="header" href="#卫生性">卫生性</a></h2>
+<p>过程宏不是卫生的 (unhygienic)，这意味着：</p>
+<ol>
+<li>生成的 token stream 内联写入到紧邻的代码</li>
+<li>生成的 token stream 受到外部引入 items 的影响</li>
+</ol>
+<p>所以要时刻警惕这一点。例如</p>
+<ul>
+<li>应该使用绝对路径，而不应该依赖预先引入的 items：即使用 <code>::std::option::Option</code> 而不应该使用
+<code>Option</code>，因为<strong>有可能</strong>在上下文存在同名的 <code>Option</code>，从而造成标识符混乱。</li>
+<li>应该确保生成的函数不与其他函数同名：比如在生成的函数名中使用 <code>__internal_foo</code>，而不使用 <code>foo</code>。</li>
+</ul>
+<h2 id="三类过程宏"><a class="header" href="#三类过程宏">三类过程宏</a></h2>
+<h3 id="函数式"><a class="header" href="#函数式">函数式</a></h3>
+<p>类似于函数调用，但使用宏调用符号 <code>!</code> 的宏。</p>
+<p>函数式过程宏的定义方式：</p>
+<ol>
+<li>使用公有函数 <code>pub fn</code> 声明，函数名即宏名</li>
+<li>函数带有 <code>#[proc_macro]</code> 属性</li>
+<li>函数签名为 <code>(TokenStream) -&gt; TokenStream</code></li>
+</ol>
+<p>MWE 如下：</p>
+<pre><code class="language-shell">$ cargo new proc
+$ cd proc
+$ # 修改 lib 的类型
+$ echo &quot;[lib]
+proc-macro = true&quot; &gt;&gt; Cargo.toml
+</code></pre>
+<pre><code class="language-rust ignore">//! src/lib.rs
+// extern crate proc_macro; // 2018 版本之后不需要这行代码
+use proc_macro::TokenStream;
+
+/// 函数式：`make_answer!()`
+#[proc_macro]
+pub fn make_answer(_item: TokenStream) -&gt; TokenStream {
+    &quot;fn answer() -&gt; u32 { 42 }&quot;.parse().unwrap()
+}
+</code></pre>
+<pre><code class="language-rust ignore">//! src/main.rs
+// extern crate proc; // 2018 版本之后不需要这行代码
+use proc::make_answer;
+
+make_answer!();
+
+fn main() {
+    println!(&quot;{}&quot;, answer()); 
+}
+</code></pre>
+<pre><code class="language-shell">$ cargo run # 将打印 42
+</code></pre>
+<p>注意：从 2018 版本之后（Rust 1.31+），引入外部库无需再写 <code>extern crate</code>，引入宏如引入 item 一样简洁，参考 
+<a href="https://doc.rust-lang.org/stable/edition-guide/rust-2018/path-changes.html">The Edition Guide#Path and module system changes</a>。</p>
+<h3 id="derive-式"><a class="header" href="#derive-式"><code>derive</code> 式</a></h3>
+<p>定义方式：</p>
+<ol>
+<li>使用公有函数 <code>pub fn</code> 声明</li>
+<li>函数带有 <code>#[proc_macro_derive(Name)]</code> 属性或者 <code>#[proc_macro_derive(Name, attributes(attr))]</code></li>
+<li>函数签名为 <code>(TokenStream) -&gt; TokenStream</code></li>
+</ol>
+<p>MWE（接着上面的例子）：</p>
+<pre><code class="language-rust ignore">//! src/lib.rs
+
+// 上面例子的函数式过程宏代码不变，追加以下内容
+
+/// `derive` 式：`#[Derive(AnswerFn)]`
+#[proc_macro_derive(AnswerFn)]
+pub fn derive_answer_fn(_item: TokenStream) -&gt; TokenStream {
+    &quot;fn answer_derive() -&gt; u32 { 42 }&quot;.parse().unwrap()
+}
+
+/// `derive` 式：`#[Derive(AnswerFn)]` + `#[helper]`
+#[proc_macro_derive(HelperAttr, attributes(helper))]
+pub fn derive_helper_attr(_item: TokenStream) -&gt; TokenStream { TokenStream::new() }
+</code></pre>
+<pre><code class="language-rust ignore">//! src/main.rs 以下内容覆盖上面的例子
+
+#![allow(unused)]
+
+// extern crate proc; // 2018 版本之后不需要这行代码
+use proc::*;
+
+make_answer!();
+
+#[derive(AnswerFn)]
+struct A;
+
+#[derive(HelperAttr)]
+struct B {
+    #[helper]
+    b: (),
+}
+
+#[derive(HelperAttr)]
+struct C(#[helper] ());
+
+fn main() {
+    println!(&quot;{}&quot;, answer());
+    println!(&quot;{}&quot;, answer_derive());
+}
+</code></pre>
+<h3 id="属性式"><a class="header" href="#属性式">属性式</a></h3>
+<p>属性宏是附加到 <a href="https://doc.rust-lang.org/nightly/reference/items.html">items</a> 的
+<a href="https://doc.rust-lang.org/nightly/reference/attributes.html">属性</a>。</p>
+<p>定义方式：</p>
+<ol>
+<li>使用公有函数 <code>pub fn</code> 声明，函数名为属性名</li>
+<li>函数带有 <code>#[proc_macro_attribute]</code> 属性</li>
+<li>函数签名为 <code>(TokenStream, TokenStream) -&gt; TokenStream</code>。第一个参数表示属性名之后的（括号分隔的）标记树，
+如果属性名之后无标记，第一个参数则为空。第二个参数表示该属性之后的内容（包括 items 和其他属性）。
+返回值表示用于替换原 item 的 item （可以任意多）。</li>
+</ol>
+<p>MWE（接着上面的例子）：</p>
+<pre><code class="language-rust ignore">//! src/lib.rs
+
+// 函数式、derive 式代码不变，追加以下内容
+
+/// 属性式：`#[show_streams]` 或者 `#[show_streams(attr)]`
+#[proc_macro_attribute]
+pub fn show_streams(attr: TokenStream, item: TokenStream) -&gt; TokenStream {
+    println!(&quot;attr: \&quot;{}\&quot;&quot;, attr.to_string());
+    println!(&quot;item: \&quot;{}\&quot;&quot;, item.to_string());
+    item
+}
+</code></pre>
+<pre><code class="language-rust ignore">//! src/main.rs
+
+// 追加以下内容
+
+// Example: Basic function
+#[show_streams]
+fn invoke1() {}
+// out: attr: &quot;&quot;
+// out: item: &quot;fn invoke1() { }&quot;
+
+// Example: Attribute with input
+#[show_streams(bar)]
+fn invoke2() {}
+// out: attr: &quot;bar&quot;
+// out: item: &quot;fn invoke2() {}&quot;
+
+// Example: Multple tokens in the input
+#[show_streams(multiple =&gt; tokens)]
+fn invoke3() {}
+// out: attr: &quot;multiple =&gt; tokens&quot;
+// out: item: &quot;fn invoke3() {}&quot;
+
+// Example:
+#[show_streams { delimiters }]
+fn invoke4() {}
+// out: attr: &quot;delimiters&quot;
+// out: item: &quot;fn invoke4() {}&quot;
+</code></pre>
+<h3 id="完整-mew"><a class="header" href="#完整-mew">完整 MEW</a></h3>
+<p>注意：<code>*.rs</code> 代码已隐藏，直接点击代码块右上角 <code>Copy to clipboard</code> 即可复制。</p>
+<pre><code class="language-toml"># Cargo.toml 内容
+[package]
+name = &quot;proc&quot;
+version = &quot;0.0.1&quot;
+edition = &quot;2021&quot;
+
+[lib]
+proc-macro = true
+</code></pre>
+<pre><code class="language-rust ignore">//! 复制以下内容到 src/lib.rs 文件
+<span class="boring">//! src: https://doc.rust-lang.org/nightly/reference/procedural-macros.html
+</span><span class="boring">// extern crate proc_macro; // 2018 版本之后不需要这行代码
+</span><span class="boring">use proc_macro::TokenStream;
+</span><span class="boring">
+</span><span class="boring">/// 函数式：`make_answer!()`
+</span>#[proc_macro]
+<span class="boring">pub fn make_answer(_item: TokenStream) -&gt; TokenStream {
+</span><span class="boring">   &quot;fn answer() -&gt; u32 { 42 }&quot;.parse().unwrap()
+</span><span class="boring">}
+</span><span class="boring">
+</span><span class="boring">/// `derive` 式：`#[Derive(AnswerFn)]`
+</span>#[proc_macro_derive(AnswerFn)]
+<span class="boring">pub fn derive_answer_fn(_item: TokenStream) -&gt; TokenStream {
+</span><span class="boring">   &quot;fn answer_derive() -&gt; u32 { 42 }&quot;.parse().unwrap()
+</span><span class="boring">}
+</span><span class="boring">
+</span><span class="boring">/// `derive` 式：`#[Derive(AnswerFn)]` + `#[helper]`
+</span>#[proc_macro_derive(HelperAttr, attributes(helper))]
+<span class="boring">pub fn derive_helper_attr(_item: TokenStream) -&gt; TokenStream { TokenStream::new() }
+</span><span class="boring">
+</span><span class="boring">/// 属性式：`#[show_streams]` 或者 `#[show_streams(attr)]`
+</span>#[proc_macro_attribute]
+<span class="boring">pub fn show_streams(attr: TokenStream, item: TokenStream) -&gt; TokenStream {
+</span><span class="boring">   println!(&quot;attr: \&quot;{}\&quot;&quot;, attr.to_string());
+</span><span class="boring">   println!(&quot;item: \&quot;{}\&quot;&quot;, item.to_string());
+</span><span class="boring">   item
+</span><span class="boring">}
+</span></code></pre>
+<pre><code class="language-rust ignore">//! 复制以下内容到 src/main.rs 文件
+<span class="boring">//! src: https://doc.rust-lang.org/nightly/reference/procedural-macros.html
+</span>#![allow(unused)]
+<span class="boring">
+</span><span class="boring">// extern crate proc; // 2018 版本之后不需要这行代码
+</span><span class="boring">use proc::*;
+</span><span class="boring">
+</span><span class="boring">// 函数式
+</span><span class="boring">make_answer!();
+</span><span class="boring">
+</span><span class="boring">// *** derive 式 ***
+</span>#[derive(AnswerFn)]
+<span class="boring">struct A;
+</span><span class="boring">
+</span>#[derive(HelperAttr)]
+<span class="boring">struct B {
+</span><span class="boring">   #[helper]
+</span><span class="boring">   b: (),
+</span><span class="boring">}
+</span><span class="boring">// *** derive 式 ***
+</span><span class="boring">
+</span><span class="boring">// *** 属性式 ***
+</span>#[derive(HelperAttr)]
+<span class="boring">struct C(#[helper] ());
+</span><span class="boring">
+</span><span class="boring">// Example: Basic function
+</span>#[show_streams]
+<span class="boring">fn invoke1() {}
+</span><span class="boring">// out: attr: &quot;&quot;
+</span><span class="boring">// out: item: &quot;fn invoke1() { }&quot;
+</span><span class="boring">
+</span><span class="boring">// Example: Attribute with input
+</span>#[show_streams(bar)]
+<span class="boring">fn invoke2() {}
+</span><span class="boring">// out: attr: &quot;bar&quot;
+</span><span class="boring">// out: item: &quot;fn invoke2() {}&quot;
+</span><span class="boring">
+</span><span class="boring">// Example: Multple tokens in the input
+</span>#[show_streams(multiple =&gt; tokens)]
+<span class="boring">fn invoke3() {}
+</span><span class="boring">// out: attr: &quot;multiple =&gt; tokens&quot;
+</span><span class="boring">// out: item: &quot;fn invoke3() {}&quot;
+</span><span class="boring">
+</span><span class="boring">// Example:
+</span>#[show_streams { delimiters }]
+<span class="boring">fn invoke4() {}
+</span><span class="boring">// out: attr: &quot;delimiters&quot;
+</span><span class="boring">// out: item: &quot;fn invoke4() {}&quot;
+</span><span class="boring">
+</span><span class="boring">// *** 属性式 ***
+</span><span class="boring">
+</span><span class="boring">fn main() {
+</span><span class="boring">   println!(&quot;{}&quot;, answer());
+</span><span class="boring">   println!(&quot;{}&quot;, answer_derive());
+</span><span class="boring">}
+</span></code></pre>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../proc-macro-note.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                            <a rel="next" href="../proc/quote.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../proc-macro-note.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                    <a rel="next" href="../proc/quote.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        <script src="../ace.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../editor.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../mode-rust.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../theme-dawn.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../theme-tomorrow_night.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../searcher.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+        <script type="text/javascript" src="../theme/pagetoc.js"></script>
+    </body>
+</html>

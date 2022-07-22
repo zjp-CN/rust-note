@@ -1,0 +1,576 @@
+<!DOCTYPE HTML>
+<html lang="zh" class="sidebar-visible no-js ayu">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>“变长参数”函数与回调 - rust-note</title>
+        <!-- Custom HTML head -->
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/pagetoc.css">
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "ayu";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('ayu')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../index.html"><strong aria-hidden="true">1.</strong> README</a></li><li class="chapter-item expanded "><a href="../proc-macro-note.html"><strong aria-hidden="true">2.</strong> 过程宏</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../proc/ref.html"><strong aria-hidden="true">2.1.</strong> 基础内容</a></li><li class="chapter-item expanded "><a href="../proc/quote.html"><strong aria-hidden="true">2.2.</strong> quote</a></li><li class="chapter-item expanded "><a href="../proc/syn.html"><strong aria-hidden="true">2.3.</strong> syn</a></li><li class="chapter-item expanded "><a href="../proc/proc_macro2.html"><strong aria-hidden="true">2.4.</strong> proc_macro2</a></li><li class="chapter-item expanded "><a href="../proc/study-case.html"><strong aria-hidden="true">2.5.</strong> 案例</a></li><li class="chapter-item expanded "><a href="../proc/debug.html"><strong aria-hidden="true">2.6.</strong> 调试</a></li><li class="chapter-item expanded "><a href="../proc/FAQ.html"><strong aria-hidden="true">2.7.</strong> FAQ</a></li></ol></li><li class="chapter-item expanded "><a href="../dcl.html"><strong aria-hidden="true">3.</strong> 声明宏案例</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../dcl/variadic.html" class="active"><strong aria-hidden="true">3.1.</strong> “变长参数”函数与回调</a></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">4.</strong> non-lexical lifetimes (NLL)</div></li><li class="chapter-item expanded "><a href="../subtyping.html"><strong aria-hidden="true">5.</strong> Subtyping and Variance</a></li><li class="chapter-item expanded "><a href="../forum.html"><strong aria-hidden="true">6.</strong> 官方论坛帖子整理</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../forum/homo-variant.html"><strong aria-hidden="true">6.1.</strong> 从同质 variants 取同类型数据</a></li><li class="chapter-item expanded "><a href="../forum/impl-const-param.html"><strong aria-hidden="true">6.2.</strong> 常量泛型参数的分类实现</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.3.</strong> 如何理解生命周期与型变</div></li><li class="chapter-item expanded "><a href="../forum/static-promotion.html"><strong aria-hidden="true">6.4.</strong> 静态生命周期提升</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu (default)</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">rust-note</h1>
+
+                    <div class="right-buttons">
+                        <a href="https://github.com/zjp-CN/rust-note" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <h1 id="变长参数函数与回调"><a class="header" href="#变长参数函数与回调">“变长参数”函数与回调</a></h1>
+<h2 id="前言"><a class="header" href="#前言">前言</a></h2>
+<p>Rust 中，“变长参数” (variadic) 总是离不开宏这个话题：众所周知，Rust 的宏有<a href="https://doc.rust-lang.org/stable/rust-by-example/macros.html">三个主要功能</a></p>
+<ol>
+<li>减少样板代码</li>
+<li>自定义语法 （DSL）</li>
+<li>变长参数接口</li>
+</ol>
+<p>作为静态语言的 Rust，函数参数的个数在声明时已经被固定，也不可能传入不同个数的参数。</p>
+<p>但我们真的无法针对函数设计出“变长参数”吗？</p>
+<h2 id="背景"><a class="header" href="#背景">背景</a></h2>
+<p>首先，明确我们需要什么<sup class="footnote-reference"><a href="#background">1</a></sup>。下面是一个略为复杂的 API 设计：</p>
+<pre><code class="language-rust ignore">memoize(&amp;mut ui, comp_, (...), |_| {});
+// memoize : 提供给使用者的函数
+// &amp;mut ui : 函数的固定参数，或者设计者认为非常重要的参数（在这篇文章中不重要）
+// comp_   : 使用者或者编写者提供的函数（或方法），是本文讨论的回调函数
+// (...)   : 回调函数的参数，对 memoize 来说是“变长的”（是本文的重点）
+// |_| {}  : 使用者提供的闭包，它可以提供上下文变量（在这篇文章中不重要）
+</code></pre>
+<p>使用者可以这样调用：</p>
+<pre><code class="language-rust ignore">memoize(&amp;mut ui, comp2, (2, 3), |_| {});
+memoize(&amp;mut ui, comp3, (1, 2, 3), |_| {});
+memoize(&amp;mut ui, comp4, (0, 1, 2, 3), |_| {});
+</code></pre>
+<p>这里，我们用元组这个看似可变长度的数据结构（而且它可以同时容纳不同的类型），来表达回调函数所需的（部分）参数。</p>
+<p>而变长参数被设计成需满足 <code>PartialEq + Clone + 'static</code>，即：</p>
+<pre><code class="language-rust ignore">pub fn memoize&lt;Params, Content, Comp&gt;(ui: &amp;mut Ui, component: Comp, params: Params, content: Content)
+    where Params: PartialEq + Clone + 'static,
+          Content: FnOnce(&amp;mut Ui),
+          Comp: todo!() { todo!() }
+
+fn comp2(ui: &amp;mut Ui, a: u8, b: u32, f: impl FnOnce(&amp;mut Ui)) { f(ui); }
+fn comp3(ui: &amp;mut Ui, a: u8, b: u32, c: u64, f: impl FnOnce(&amp;mut Ui)) { f(ui); }
+fn comp4(ui: &amp;mut Ui, a: u8, b: u32, c: u64, d: usize, f: impl FnOnce(&amp;mut Ui)) { f(ui); }
+</code></pre>
+<p>忽略 <code>&amp;mut Ui</code> 和 <code>f: impl FnOnce(&amp;mut Ui)</code> 这两个“固定参数”，它们不是本文的重点。</p>
+<div class="footnote-definition" id="background"><sup class="footnote-definition-label">1</sup>
+<p>原例子由 @费超 <a href="https://play.rust-lang.org/?version=stable&amp;mode=debug&amp;edition=2021&amp;gist=4ed74b052309f1bd51bc4e9a1d8872cb">提供</a>。</p>
+</div>
+<h2 id="思路"><a class="header" href="#思路">思路</a></h2>
+<p>在 Rust 的类型系统中，使用 trait 进行抽象是最根本的方式：</p>
+<pre><code class="language-rust ignore">pub trait Component&lt;Params, Content&gt; {
+    fn call(&amp;self, ui: &amp;mut Ui, params: Params, content: Content);
+}
+</code></pre>
+<p>这里的关键在于，使用<code>Params</code> 泛型参数来抽象 <code>comp*</code> 函数中这些 <code>a, b, c, ...</code> 函数参数。</p>
+<p>然后，给函数实现 <code>Component</code> （以简单的两参数为例）：</p>
+<pre><code class="language-rust ignore">impl&lt;F, P1, P2, Content&gt; Component&lt;(P1, P2), Content&gt; for F
+where
+    P1: PartialEq + Clone + 'static,
+    P2: PartialEq + Clone + 'static,
+    Content: FnOnce(&amp;mut Ui),
+    F: Fn(&amp;mut Ui, P1, P2, Content),
+{
+    fn call(&amp;self, ui: &amp;mut Ui, params: (P1, P2), content: Content) {
+        let (p1, p2) = params;
+        self(ui, p1, p2, content)
+    }
+}
+</code></pre>
+<p>这个 <code>where</code> 语句表达了最核心的内容：</p>
+<ol>
+<li>原本的泛型参数 <code>Params</code> 被“规定成”某种严格/具体一些的形式：<code>(P1, P2)</code>。<code>(P1, P2)</code> 依然是一种泛型，表示使用者应传入两元素的元组。</li>
+<li><code>F: Fn(&amp;mut Ui, P1, P2, Content)</code>：这把所考虑的回调函数的形式抽象出来了。</li>
+<li><code>P1</code>、<code>P2</code>、<code>Content</code> 的 trait bounds 不是本文的重点，无需赘言。</li>
+</ol>
+<pre><pre class="playground"><code class="language-rust">// https://play.rust-lang.org/?version=nightly&amp;mode=debug&amp;edition=2021&amp;gist=820a56b25ce4cfef20795e0b111f7cc5
+#![allow(unused)]
+
+<span class="boring">pub struct Ui {}
+</span><span class="boring">impl Ui {
+</span><span class="boring">   pub fn update&lt;T&gt;(&amp;mut self, a: String, b: Vec&lt;T&gt;, f: impl FnOnce(&amp;mut Ui))
+</span><span class="boring">       where T: PartialEq + Clone + 'static {
+</span><span class="boring">   }
+</span><span class="boring">}
+</span><span class="boring">
+</span><span class="boring">pub trait Component&lt;Params, Content&gt; {
+</span><span class="boring">   fn call(&amp;self, ui: &amp;mut Ui, params: Params, content: Content);
+</span><span class="boring">}
+</span><span class="boring">
+</span><span class="boring">impl&lt;F, P1, P2, Content&gt; Component&lt;(P1, P2), Content&gt; for F
+</span><span class="boring">   where P1: PartialEq + Clone + 'static,
+</span><span class="boring">         P2: PartialEq + Clone + 'static,
+</span><span class="boring">         Content: FnOnce(&amp;mut Ui),
+</span><span class="boring">         F: Fn(&amp;mut Ui, P1, P2, Content)
+</span><span class="boring">{
+</span><span class="boring">   fn call(&amp;self, ui: &amp;mut Ui, params: (P1, P2), content: Content) {
+</span><span class="boring">       let (p1, p2) = params;
+</span><span class="boring">       self(ui, p1, p2, content)
+</span><span class="boring">   }
+</span><span class="boring">}
+</span><span class="boring">
+</span>pub fn memoize&lt;Params: PartialEq + Clone + 'static,
+               Content: FnOnce(&amp;mut Ui),
+               Comp: Component&lt;Params, Content&gt;&gt;(
+    ui: &amp;mut Ui, component: Comp, params: Params, content: Content) {
+    component.call(ui, params, content);
+}
+
+fn comp2(ui: &amp;mut Ui, a: u8, b: u32, f: impl FnOnce(&amp;mut Ui)) { f(ui); }
+
+fn main() {
+    let mut ui = Ui {};
+
+    memoize(&amp;mut ui, comp2, (2, 3), |_| {});
+
+    let args = (String::new(), vec![(1usize, 1.0f64)]);
+    memoize(&amp;mut ui, Ui::update, args, |_| {});
+}
+</code></pre></pre>
+<p>至此，<code>memoize</code> 支持任何具有 <code>F: Fn(&amp;mut Ui, P1, P2, Content)</code> 形式的函数（方法、甚至闭包），只要其参数满足各自的 trait bounds。</p>
+<p>如何支持其他参数长度的函数 <code>F: Fn(&amp;mut Ui, ..., Content)</code> 呢？</p>
+<p>很简单，却也很无聊，只需继续实现 <code>impl&lt;F, ..., Content&gt; Component&lt;(...), Content&gt; for F</code> —— 整个过程只运用了最基础的 trait bounds 知识。</p>
+<h2 id="进阶"><a class="header" href="#进阶">进阶</a></h2>
+<p>根据上一部分的内容，我们得到一份“样板代码”，你可以手写需要的部分，但支持宏编程的语言一定不会按这种原始的方式拓展样板代码。</p>
+<p>考虑以下宏（忽略这里未考虑严格绝对路径）：</p>
+<pre><pre class="playground"><code class="language-rust">// https://play.rust-lang.org/?version=nightly&amp;mode=debug&amp;edition=2021&amp;gist=b35db5a10a259e9ac1cdd1899f781ab1
+#![allow(unused)]
+<span class="boring">
+</span><span class="boring">pub struct Ui {}
+</span><span class="boring">
+</span><span class="boring">pub trait Component&lt;Params, Content&gt; {
+</span><span class="boring">   fn call(&amp;self, ui: &amp;mut Ui, params: Params, content: Content);
+</span><span class="boring">}
+</span>
+macro_rules! impl_component {
+    ($($P:ident),*) =&gt; {
+        impl&lt;F, $($P,)* Content&gt; $crate::Component&lt;( $($P,)* ), Content&gt; for F
+            where F: Fn(&amp;mut Ui, $($P,)* Content),
+                  $( $P: ::std::cmp::PartialEq + ::std::clone::Clone + 'static, )*
+                  Content: ::std::ops::FnOnce(&amp;mut Ui)
+        {
+
+            fn call(&amp;self, ui: &amp;mut Ui, params: ( $($P,)* ), content: Content) {
+                #[allow(non_snake_case)]
+                let ($($P,)*) = params;
+                self(ui, $($P,)* content)
+            }
+        }
+    };
+}
+
+impl_component!();
+impl_component!(P1);
+impl_component!(P1, P2);
+impl_component!(P1, P2, P3);
+impl_component!(P1, P2, P3, P4);
+<span class="boring">
+</span><span class="boring">pub fn memoize&lt;Params, Content, Comp&gt;(ui: &amp;mut Ui, component: Comp, params: Params, content: Content)
+</span><span class="boring">   where Params: PartialEq + Clone + 'static,
+</span><span class="boring">         Content: FnOnce(&amp;mut Ui),
+</span><span class="boring">         Comp: Component&lt;Params, Content&gt;
+</span><span class="boring">{
+</span><span class="boring">   component.call(ui, params, content);
+</span><span class="boring">}
+</span><span class="boring">
+</span><span class="boring">fn comp1(ui: &amp;mut Ui, a: u8, f: impl FnOnce(&amp;mut Ui)) { f(ui); }
+</span><span class="boring">fn comp_(ui: &amp;mut Ui, a: &amp;str, f: impl FnOnce(&amp;mut Ui)) { f(ui); }
+</span><span class="boring">fn comp2(ui: &amp;mut Ui, a: u8, b: u32, f: impl FnOnce(&amp;mut Ui)) { f(ui); }
+</span><span class="boring">fn comp3(ui: &amp;mut Ui, a: u8, b: u32, c: u64, f: impl FnOnce(&amp;mut Ui)) { f(ui); }
+</span><span class="boring">fn comp4(ui: &amp;mut Ui, a: u8, b: u32, c: u64, d: usize, f: impl FnOnce(&amp;mut Ui)) { f(ui); }
+</span>
+fn main() {
+    let mut ui = Ui {};
+    memoize(&amp;mut ui, comp1, (1,), |_| {});
+    memoize(&amp;mut ui, comp_, (&quot;&quot;,), |_| {});
+    memoize(&amp;mut ui, comp2, (2, 3), |_| {});
+    memoize(&amp;mut ui, comp3, (1, 2, 3), |_| {});
+    memoize(&amp;mut ui, comp4, (0, 1, 2, 3), |_| {});
+}
+</code></pre></pre>
+<p>这个声明宏十分简单，因为只匹配了一连串逗号分隔的标识符，然后利用反复技巧去展开。</p>
+<p>如果你想精简重复的宏调用，或许希望继续写一个宏 <code>all_tuples!</code>，然后通过 <code>all_tuples! {impl_component, 1, 16, P}</code> 生成支持 1 ~ 16 个函数参数的实现。</p>
+<p>这实际上是 <a href="https://docs.rs/bevy/latest/bevy/ecs/system/trait.SystemParamFunction.html"><code>bevy::SystemParamFunction</code></a> 的基本思路。如果你已经理解以上内容，那么可以轻松阅读和理解 <a href="https://github.com/bevyengine/bevy/blob/fed93a0edce9d66586dc70c1207a2092694b9a7d/crates/bevy_ecs/src/system/function_system.rs#L492-L541">那部分源码</a>。</p>
+<p>不过，<a href="https://github.com/bevyengine/bevy/blob/fed93a0edce9d66586dc70c1207a2092694b9a7d/crates/bevy_ecs/macros/src/lib.rs#L48-L81"><code>bevy::all_tuples!</code></a> 使用了过程宏来定义。你完全可以自己写一个类似过程宏，只需要运用简单的步骤，比如这样：</p>
+<pre><code class="language-rust ignore"><span class="boring">use proc_macro::TokenStream;
+</span><span class="boring">use quote::{format_ident, quote};
+</span><span class="boring">use syn::{
+</span><span class="boring">   parse::{Parse, ParseStream},
+</span><span class="boring">   parse_macro_input, Ident, LitInt, Result,
+</span><span class="boring">};
+</span><span class="boring">
+</span>#[proc_macro]
+pub fn all_tuples(input: TokenStream) -&gt; TokenStream {
+    let Input { name, start, end, ident } = parse_macro_input!(input);
+    let id = |s: u8, e: u8| (s..e).map(|n| format_ident!(&quot;{ident}{n}&quot;));
+    let items = (start..=end).map(|n| {
+                                 let ids = id(start, n + 1);
+                                 quote!( #name!{#(#ids),*} )
+                             });
+    quote!(#(#items)*).into()
+}
+
+struct Input {
+    name:  Ident,
+    start: u8,
+    end:   u8,
+    ident: Ident,
+}
+
+impl Parse for Input {
+    fn parse(input: ParseStream) -&gt; Result&lt;Self&gt; {
+        use syn::token::Comma;
+        let name     = input.parse()?;
+        let _: Comma = input.parse()?;
+        let start    = input.parse::&lt;LitInt&gt;()?.base10_parse()?;
+        let _: Comma = input.parse()?;
+        let end      = input.parse::&lt;LitInt&gt;()?.base10_parse()?;
+        let _: Comma = input.parse()?;
+        let ident    = input.parse()?;
+        Ok(Input { name, start, end, ident })
+    }
+}
+</code></pre>
+<p>宏充满了技巧，这需要观察和练习。如果你感兴趣的话，使用这段代码的展开结果<a href="https://play.rust-lang.org/?version=nightly&amp;mode=debug&amp;edition=2021&amp;gist=1cee68df91a0d8654dfbe1c88ec5edf1">见此处</a>。</p>
+<p>当然，如果你的宏代码不够通用（不必复用），可以把这两个宏合并成一个宏：</p>
+<ul>
+<li>整合声明宏和过程宏的代码见<a href="https://github.com/zjp-CN/rust-note/tree/main/src/dcl/variadic">此处</a></li>
+<li>只使用声明宏的代码见<a href="https://github.com/zjp-CN/rust-note/tree/main/src/dcl/variadic-dcl">此处</a>，此技巧受标准库<a href="https://github.com/rust-lang/rust/blob/e40d5e83dc133d093c22c7ff016b10daa4f40dcf/library/core/src/array/mod.rs#L371-L394">这段</a>代码的启发</li>
+</ul>
+<p>然而，我想提醒你的是，本文的核心技巧是 trait 和泛型参数，宏只是锦上添花的内容。</p>
+<h2 id="细节"><a class="header" href="#细节">细节</a></h2>
+<p>注意：这里的细节与最佳实践无关，意图在于简述事实。</p>
+<h3 id="元组"><a class="header" href="#元组">元组</a></h3>
+<p>函数 <code>memoize</code> 的 <code>params: Params</code> 参数实际是利用元组的以下特点做到“变长”的：</p>
+<ul>
+<li>元组可以容纳不同类型的元素，这与函数的各个参数可以为不同类型一致，所以使用泛型 <code>(P1, ...)</code> 来抽象“函数参数各自具有其类型”；</li>
+<li>这种“变长”的前提是“定长”：只有实现了固定长度的泛型元组，才能运用到相应的函数上。<br />
+即因为 <code>impl&lt;F, P1, ..., Pn, Content&gt; Component&lt;(P1, ..., Pn), Content&gt; for F</code>，所以
+<code>memoize(&amp;mut ui, comp_n, (p1, ..., pn), |_| {});</code>。</li>
+</ul>
+<p>这种抽象并不是完美的，它建立在类型系统之上：泛型 <code>(P1, ...)</code> 虽然解决了参数的形式问题，但也意味着可能的、复杂的 trait bounds。</p>
+<p>还是以两参数为例，这里的实现相当精简：</p>
+<pre><code class="language-rust ignore">impl&lt;F, P1, P2, Content&gt; Component&lt;(P1, P2), Content&gt; for F
+where
+    P1: PartialEq + Clone + 'static,
+    P2: PartialEq + Clone + 'static,
+    Content: FnOnce(&amp;mut Ui),
+    F: Fn(&amp;mut Ui, P1, P2, Content),
+</code></pre>
+<p>但你容易忽略一些基本事实和局限性：</p>
+<ul>
+<li>所有元素满足 trait bound，并不意味着元组满足这个 trait bound：如果要求 <code>P1: SomeTrait</code> ... <code>Pn: SomeTrait</code>，则必须 <strong>手动</strong> 给
+<code>(P1, ..., Pn)</code> 实现 <code>SomeTrait</code>。幸运的是，针对这种“传递”关系，标准库已经给元组，在最多 12 个元素的情况下实现了<a href="https://doc.rust-lang.org/std/primitive.tuple.html#trait-implementations-1">某些</a> traits。
+<pre><code class="language-rust ignore">pub fn memoize&lt;Params, Content, Comp&gt;(ui: &amp;mut Ui, component: Comp, params: Params, content: Content)
+  where Params: PartialEq + Clone + 'static, // (P1, ..., Pn): PartialEq + Clone + 'static
+        Content: FnOnce(&amp;mut Ui),
+        Comp: Component&lt;Params, Content&gt; { ... }
+</code></pre>
+超出标准库的元组实现，意味着你需要自己实现。参考 bevy 的 <a href="https://docs.rs/bevy/latest/bevy/ecs/system/trait.SystemParam.html#foreign-impls"><code>SystemParam</code></a>、<a href="https://docs.rs/bevy/latest/bevy/ecs/system/trait.SystemParamFetch.html#foreign-impls"><code>SystemParamFetch</code></a>、<a href="https://docs.rs/bevy/latest/bevy/ecs/system/trait.SystemParamState.html#foreign-impls"><code>SystemParamState</code></a>。<br />
+例如，超出 12 个元素，且涉及标准库定义的 traits；或者无论多少元素，但凡涉及第三方库的 traits：你会遇到孤儿原则，需要使用其他技巧来手动实现。</li>
+<li>换言之，即便使用 <code>all_tuples!(impl_component, 1, 16)</code> 之类的技巧生成最多支持 16 个元素的元组，但<a href="https://play.rust-lang.org/?version=nightly&amp;mode=debug&amp;edition=2021&amp;gist=b5780dd7175419ada76d4268c6cd0026">以下代码</a>无法编译通过：
+<pre><code class="language-rust ignore">fn comp13(ui: &amp;mut Ui, p1: u8, p2: u8, p3: u8, p4: u8, p5: u8, p6: u8, p7: u8, p8: u8, p9: u8,
+          p10: u8, p11: u8, p12: u8, p13: u8, f: impl FnOnce(&amp;mut Ui)) { f(ui); }
+
+memoize(&amp;mut ui, comp13, (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), |_| {});
+
+error[E0277]: can't compare `(u8, u8, u8, u8, u8, u8, u8, u8, u8, u8, u8, u8, u8)` with `(u8, u8, u8, u8, u8, u8, u8, u8, u8, u8, u8, u8, u8)`
+ --&gt; src/main.rs
+  |
+  | memoize(&amp;mut ui, comp13, (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), | _ | {});
+  | ^^^^^^^ no implementation for `(u8, u8, u8, u8, u8, u8, u8, u8, u8, u8, u8, u8, u8) == (u8, u8, u8, u8, u8, u8, u8, u8, u8, u8, u8, u8, u8)`
+</code></pre>
+</li>
+</ul>
+<p>总之，Rust 是静态语言，变长参数、可选参数这种极具动态语言的特性的事物对 Rust 来说并不是必须，但好在其类型系统不算薄弱。</p>
+<h3 id="static"><a class="header" href="#static"><code>'static</code></a></h3>
+<p>在参数的 trait bound 中，<code>P: PartialEq + Clone + 'static</code> 约束描述了函数参数必须是 <strong>不含引用的类型</strong> 或者
+<strong>生命周期为 <code>'static</code> 的类型</strong><sup class="footnote-reference"><a href="#static">2</a></sup>，而且该类型实现了 <code>PartialEq</code> 和 <code>Clone</code> trait。</p>
+<p>这意味着，<code>memoize</code> 虽然可以接受下面这个函数，但<a href="https://play.rust-lang.org/?version=stable&amp;mode=debug&amp;edition=2021&amp;gist=145a70626c55695bcdad49e43603e05c">不接受非 <code>'static</code> 生命周期的参数</a>：</p>
+<pre><code class="language-rust ignore">fn comp_(ui: &amp;mut Ui, a: &amp;str, b: Vec&lt;&amp;str&gt;, f: impl FnOnce(&amp;mut Ui)) { f(ui); }
+// 实际上，由于 `P: 'static`，a 必须是 &amp;'static str， b 必须是 Vec&lt;'static str&gt;
+memoize(&amp;mut ui, comp_, (&quot;&quot;, vec![&quot;&quot;]), |_| {}); // ok
+
+let s = String::from(&quot;&quot;); // 生命周期不是 'static
+memoize(&amp;mut ui, comp_, (&amp;s, vec![&amp;s]), |_| {}); // error[E0597]: `s` does not live long enough
+</code></pre>
+<p>当你<a href="https://play.rust-lang.org/?version=stable&amp;mode=debug&amp;edition=2021&amp;gist=145a70626c55695bcdad49e43603e05c">去掉 <code>'static</code> 约束</a>，<code>memoize</code> 接受上面的代码。</p>
+<div class="footnote-definition" id="static"><sup class="footnote-definition-label">2</sup>
+<p>如果你不明白 <code>T: 'static</code> 意味着什么，请仔细阅读 <a href="https://github.com/pretzelhammer/rust-blog/blob/master/posts/common-rust-lifetime-misconceptions.md#2-if-t-static-then-t-must-be-valid-for-the-entire-program">Common Rust Lifetime Misconceptions</a></p>
+</div>
+<h3 id="fn-or-fn"><a class="header" href="#fn-or-fn"><code>Fn</code> or <code>fn</code></a></h3>
+<p>你可能会考虑到给什么样的函数实现 <code>Component</code>：</p>
+<pre><code class="language-rust ignore">impl&lt;F: FnOnce(&amp;mut Ui, ...), ...&gt; Component&lt;...&gt; for F { } // 或者
+impl&lt;F: FnMut(&amp;mut Ui, ...), ...&gt; Component&lt;...&gt; for F { } // 或者
+impl&lt;F: Fn(&amp;mut Ui, ...), ...&gt; Component&lt;...&gt; for F { } // 或者
+impl&lt;...&gt; Component&lt;...&gt; for fn(&amp;mut Ui, ...) { } // 函数指针
+</code></pre>
+<p>Rust 可以从多种维度分类和抽象函数：</p>
+<ol>
+<li>使用类型区分是否能捕获环境中的变量：
+<ul>
+<li>不能捕获、不捕获：<a href="https://doc.rust-lang.org/reference/types/function-item.html">Function Item</a>、<a href="https://doc.rust-lang.org/reference/types/function-pointer.html">Function Pointer</a></li>
+<li>捕获：<a href="https://doc.rust-lang.org/reference/types/closure.html">Closure</a></li>
+</ul>
+</li>
+<li>使用 trait 抽象“以何种方式捕获/或者如何处理捕获的环境变量”（注意，这与函数参数的所有权、可变性无关）：
+<ul>
+<li><a href="https://doc.rust-lang.org/std/ops/trait.FnOnce.html"><code>FnOnce</code></a>：获取捕获变量的所有权</li>
+<li><a href="https://doc.rust-lang.org/std/ops/trait.FnMut.html"><code>FnMut</code></a>：修改捕获变量的值；且 <code>FnMut</code> 是 <code>FnOnce</code> 的子类型</li>
+<li><a href="https://doc.rust-lang.org/std/ops/trait.Fn.html"><code>Fn</code></a>：获取捕获变量的引用；且 <code>Fn</code> 是 <code>FnMut</code> 的子类型</li>
+</ul>
+</li>
+</ol>
+<p>它们的具体说明参考各自的文档，这里只总结一下基本知识：</p>
+<ul>
+<li><a href="https://doc.rust-lang.org/reference/types/function-item.html">Function Item</a>：只适用于函数条目，可以赋给变量，但无法写出其类型；可以转化成函数指针，而且实现了 <code>FnOnce</code>、<code>FnMut</code>、<code>Fn</code> 以及其他 traits，零大小</li>
+<li><a href="https://doc.rust-lang.org/reference/types/function-pointer.html">Function Pointer</a>：函数指针，是 primitive type，通常从函数条目或非捕获闭包使用 <code>as</code> 转化过来，对最多 12 个参数的情况实现了 
+<code>FnOnce</code>、<code>FnMut</code>、<code>Fn</code> 以及其他 traits，具有 <code>usize</code> 大小</li>
+<li><a href="https://doc.rust-lang.org/reference/types/closure.html">Closure</a>：闭包，按照一些规则实现 <code>FnOnce</code>、<code>FnMut</code>、<code>Fn</code> 及其他 traits 中的部分或全部，可以赋给变量，但无法写出其类型；由捕获变量的数量决定大小</li>
+</ul>
+<h3 id="类型参数-or-关联类型"><a class="header" href="#类型参数-or-关联类型">类型参数 or 关联类型</a></h3>
+<p>或许你想使用关联类型定义 <code>Params</code>：</p>
+<pre><code class="language-rust ignore">pub trait Component&lt;Content&gt; {
+    type Params: PartialEq + Clone + 'static;
+    fn call(&amp;self, ui: &amp;mut Ui, params: Self::Params, content: Content);
+}
+
+// 或者
+pub trait Component {
+    type Params: PartialEq + Clone + 'static;
+    type Content: FnOnce(&amp;mut Ui);
+    fn call(&amp;self, ui: &amp;mut Ui, params: Self::Params, content: Content);
+}
+</code></pre>
+<p>无论那种做法，在本文所需的场景下都不合适：因为它们实际上没有抽象出“不限定函数参数的类型”。</p>
+<p>我总结了以下表格，也可以参考 <a href="https://users.rust-lang.org/t/differece-between-type-item-and-item">某则帖子</a> 对具体的 <code>Iterator</code> 进行类型参数还是关联类型抽象的讨论。</p>
+<div class="table-wrapper"><table><thead><tr><th>角度</th><th>类型参数  <code>T</code>、<code>U</code></th><th>关联类型 <code>T</code>、<code>U</code> （不考虑 GAT）</th></tr></thead><tbody>
+<tr><td>形式</td><td><code>trait Trait&lt;T, U: Bounds&gt;</code></td><td>处于 trait 内的 <code>type T;</code> 或者 <code>type U: Bounds;</code></td></tr>
+<tr><td>Reference 链接</td><td><a href="https://doc.rust-lang.org/reference/items/generics.html">generics</a></td><td><a href="https://doc.rust-lang.org/reference/items/associated-items.html#associated-types">associated-types</a></td></tr>
+<tr><td>泛型 -&gt; 具体类型</td><td>由 trait impl 决定，但由使用者选择</td><td>由 trait impl 决定和选择</td></tr>
+<tr><td>抽象性</td><td>满足 trait bound 的任意类型</td><td>从声明的角度看，是满足 trait bound 的任意类型；<br>但从实现的角度看，无抽象，因为关联类型因具体实现而确定</td></tr>
+<tr><td>使用语法</td><td>该 trait 中：直接使用 <code>T</code>、<code>U</code></td><td><code>Self::T</code>、<code>Self::U</code>、<code>&lt;Implementator as Trait&gt;::T</code></td></tr>
+<tr><td>implementator<sup class="footnote-reference"><a href="#implementator">3</a></sup> vs <code>T</code></td><td>一对多<sup class="footnote-reference"><a href="#1vs-">4</a></sup></td><td>一对一<sup class="footnote-reference"><a href="#1vs1">5</a></sup></td></tr>
+<tr><td>类型推断</td><td>通常要指明类型</td><td>容易直接推断，因为一经实现，类型是固定的</td></tr>
+<tr><td>方法</td><td>由 trait bounds 提供泛型方法</td><td>默认实现时由 trait bounds 提供泛型方法；覆盖实现时由具体类型提供方法</td></tr>
+</tbody></table>
+</div>
+<div class="footnote-definition" id="implementator"><sup class="footnote-definition-label">3</sup>
+<p>实现 trait 的类型：比如 <code>impl AsRef&lt;[u8]&gt; for str</code> 中，<code>str</code> 就叫做 implementator。</p>
+</div>
+<div class="footnote-definition" id="1vs-"><sup class="footnote-definition-label">4</sup>
+<p>比如 <code>impl AsRef&lt;[u8]&gt; for str</code>、<code>impl AsRef&lt;str&gt; for str</code>、<code>impl AsRef&lt;OsStr&gt; for str</code> 等等。</p>
+</div>
+<div class="footnote-definition" id="1vs1"><sup class="footnote-definition-label">5</sup>
+<p>比如 <code>impl&lt;'a&gt; Iterator for Chars&lt;'a&gt;</code> 只有 <code>type Item = char</code>。</p>
+</div>
+<h2 id="其他方式"><a class="header" href="#其他方式">其他方式</a></h2>
+<p>完全使用宏（无须定义 <code>Component</code> trait），比如这样：</p>
+<pre><pre class="playground"><code class="language-rust">// https://play.rust-lang.org/?version=stable&amp;mode=debug&amp;edition=2021&amp;gist=f44c02fd60a763d30fef5d25d29e7d45
+#![allow(unused)]
+
+pub struct Ui {}
+
+macro_rules! memoize {
+    ($ui:expr, $f:path, ($($p:expr),*), $content:expr) =&gt; {
+        $f($ui, $($p,)* $content);
+    };
+}
+
+fn comp0(ui: &amp;mut Ui, f: impl FnOnce(&amp;mut Ui)) { f(ui); }
+fn comp_(ui: &amp;mut Ui, a: &amp;str, f: impl FnOnce(&amp;mut Ui)) { f(ui); }
+fn comp4(ui: &amp;mut Ui, a: u8, b: u32, c: u64, d: usize, f: impl FnOnce(&amp;mut Ui)) { f(ui); }
+fn comp12(ui: &amp;mut Ui, p1: u8, p2: u8, p3: u8, p4: u8, p5: u8, p6: u8, p7: u8, p8: u8, p9: u8,
+          p10: u8, p11: u8, p12: u8, f: impl FnOnce(&amp;mut Ui)) { f(ui); }
+
+fn main() {
+    let mut ui = Ui {};
+    memoize!(&amp;mut ui, comp0, (), |_| {});
+    memoize!(&amp;mut ui, comp_, (&quot;&quot;), |_| {});
+    memoize!(&amp;mut ui, comp4, (0, 1, 2, 3), |_| {});
+    memoize!(&amp;mut ui, comp12, (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), |_| {});
+}
+</code></pre></pre>
+<p>甚至可以<a href="https://internals.rust-lang.org/t/named-default-arguments-a-review-proposal-and-macro-implementation">用宏实现命名和默认参数</a>。</p>
+<p>此外，还有 2013 年提出，但已经搁置的 <a href="https://github.com/rust-lang/rfcs/issues/376">RFC: variadic generics</a>。</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../dcl.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                            <a rel="next" href="../subtyping.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../dcl.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                    <a rel="next" href="../subtyping.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        <script src="../ace.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../editor.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../mode-rust.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../theme-dawn.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../theme-tomorrow_night.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../searcher.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+        <script type="text/javascript" src="../theme/pagetoc.js"></script>
+    </body>
+</html>

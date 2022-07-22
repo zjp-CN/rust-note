@@ -1,0 +1,12 @@
+[package]
+name = "_impl"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+path = "lib.rs"
+proc-macro = true
+
+[dependencies]
+quote = "1"
+syn = "1"

@@ -1,0 +1,695 @@
+<!DOCTYPE HTML>
+<html lang="zh" class="sidebar-visible no-js ayu">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>syn - rust-note</title>
+        <!-- Custom HTML head -->
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/pagetoc.css">
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "ayu";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('ayu')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../index.html"><strong aria-hidden="true">1.</strong> README</a></li><li class="chapter-item expanded "><a href="../proc-macro-note.html"><strong aria-hidden="true">2.</strong> 过程宏</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../proc/ref.html"><strong aria-hidden="true">2.1.</strong> 基础内容</a></li><li class="chapter-item expanded "><a href="../proc/quote.html"><strong aria-hidden="true">2.2.</strong> quote</a></li><li class="chapter-item expanded "><a href="../proc/syn.html" class="active"><strong aria-hidden="true">2.3.</strong> syn</a></li><li class="chapter-item expanded "><a href="../proc/proc_macro2.html"><strong aria-hidden="true">2.4.</strong> proc_macro2</a></li><li class="chapter-item expanded "><a href="../proc/study-case.html"><strong aria-hidden="true">2.5.</strong> 案例</a></li><li class="chapter-item expanded "><a href="../proc/debug.html"><strong aria-hidden="true">2.6.</strong> 调试</a></li><li class="chapter-item expanded "><a href="../proc/FAQ.html"><strong aria-hidden="true">2.7.</strong> FAQ</a></li></ol></li><li class="chapter-item expanded "><a href="../dcl.html"><strong aria-hidden="true">3.</strong> 声明宏案例</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../dcl/variadic.html"><strong aria-hidden="true">3.1.</strong> “变长参数”函数与回调</a></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">4.</strong> non-lexical lifetimes (NLL)</div></li><li class="chapter-item expanded "><a href="../subtyping.html"><strong aria-hidden="true">5.</strong> Subtyping and Variance</a></li><li class="chapter-item expanded "><a href="../forum.html"><strong aria-hidden="true">6.</strong> 官方论坛帖子整理</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../forum/homo-variant.html"><strong aria-hidden="true">6.1.</strong> 从同质 variants 取同类型数据</a></li><li class="chapter-item expanded "><a href="../forum/impl-const-param.html"><strong aria-hidden="true">6.2.</strong> 常量泛型参数的分类实现</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.3.</strong> 如何理解生命周期与型变</div></li><li class="chapter-item expanded "><a href="../forum/static-promotion.html"><strong aria-hidden="true">6.4.</strong> 静态生命周期提升</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu (default)</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">rust-note</h1>
+
+                    <div class="right-buttons">
+                        <a href="https://github.com/zjp-CN/rust-note" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <h1 id="syn"><a class="header" href="#syn">syn</a></h1>
+<p>这里主要结合编写经验来总结 syn 的使用方式，少数内容是对 syn 文档的翻译和重新组织。</p>
+<p>如果内容上有出入，请以 syn 文档为准。</p>
+<h2 id="整体介绍"><a class="header" href="#整体介绍">整体介绍</a></h2>
+<blockquote>
+<p>文档：<a href="https://docs.rs/syn">https://docs.rs/syn</a></p>
+</blockquote>
+<p>syn 主要是一个解析库，用于把 Rust 标记流解析为 Rust 源代码的语法树。目前该库面向过程宏，但包含一些可能更通用的 API。</p>
+<p>作者自己从以下几个方面介绍 syn，并给出了典型的代码。</p>
+<ul>
+<li>数据结构方面：syn 提供一个完整的、可以表示任何有效的 Rust 源代码的语法树。
+<ul>
+<li><code>syn::File</code> 就是这棵语法树的根节点，这个类型表示一个完整的代码源文件；</li>
+<li>更常见的情况是使用其他入口，比如 <code>syn::Item</code>、<code>syn::Expr</code> 和 <code>syn::Type</code>，它们都是枚举体，对应于 Rust 中的语法概念。</li>
+<li>几乎所有语法树节点的文档都给出了典型例子或者简明说明，非常易于理解和使用。</li>
+</ul>
+</li>
+<li><code>#[derive]</code> 方面：为解析 derive 宏的标记流提供 <code>syn::DeriveInput</code> 类型。</li>
+<li>解析方面：
+<ul>
+<li><a href="https://docs.rs/syn/latest/syn/parse/trait.Parse.html"><code>Parse</code></a> trait 提供对 <code>ParseStream</code> 类型使用 <code>parse</code> 方法来将其解析成实现了此 trait 的基础（或自定义）类型；</li>
+<li>syn 提供的每种语法树节点类型都可以单独解析和多项重组，由此轻松构建起全新的自定义语法；</li>
+<li>更深入的解析参考 <a href="https://docs.rs/syn/latest/syn/parse/index.html">syn::parse</a> 模块文档。</li>
+</ul>
+</li>
+<li>位置信息： syn 解析的每个标记都与一个 <a href="https://docs.rs/proc-macro2/*/proc_macro2/struct.Span.html"><code>Span</code></a>
+相关联，该类型用于跟踪源代码中的标记的行和列信息，从而让过程宏指定在源代码位置上显示错误消息。</li>
+<li>feature 控制：你只需要启用你所需要的功能，而不必开启不需要的功能。</li>
+</ul>
+<h2 id="解析"><a class="header" href="#解析">解析</a></h2>
+<blockquote>
+<p>文档：<a href="https://docs.rs/syn/latest/syn/parse/index.html">https://docs.rs/syn/latest/syn/parse/index.html</a></p>
+</blockquote>
+<h3 id="parse_macro_input"><a class="header" href="#parse_macro_input"><code>parse_macro_input!</code></a></h3>
+<p>这个宏充当过程宏的解析入口：无论哪种过程宏，也无论转化成 syn 定义的语法树还是你自定义的语法树，几乎都从这个宏开始。</p>
+<p>一个最基本的 derive 宏的完整例子是：</p>
+<pre><code class="language-rust ignore"><span class="boring">// Cargo.toml 中写入以下内容：
+</span><span class="boring">// [dependencies]
+</span><span class="boring">// syn = &quot;1.0&quot;
+</span><span class="boring">// quote = &quot;1.0&quot;
+</span><span class="boring">// 
+</span><span class="boring">// [lib]
+</span><span class="boring">// proc-macro = true
+</span>
+use proc_macro::TokenStream;
+
+#[proc_macro_derive(MyMacro)]
+pub fn my_macro(input: TokenStream) -&gt; TokenStream {
+    // Parse the input tokens into a syntax tree
+    let input = syn::parse_macro_input!(input as syn::DeriveInput);
+    TokenStream::new()
+}
+</code></pre>
+<p>当你使用 <code>cargo expand --lib</code> 命令，可以看到如下结果（点击右上角的取消隐藏看到完整内容）：</p>
+<pre><code class="language-rust ignore">#![feature(prelude_import)]
+#[prelude_import]
+<span class="boring">use std::prelude::rust_2021::*;
+</span>#[macro_use]
+<span class="boring">extern crate std;
+</span>
+use proc_macro::TokenStream;
+#[proc_macro_derive(MyMacro)]
+pub fn my_macro(input: TokenStream) -&gt; TokenStream {
+    let input = match ::syn::parse_macro_input::parse::&lt;syn::DeriveInput&gt;(input) {
+        ::syn::__private::Ok(data) =&gt; data,
+        ::syn::__private::Err(err) =&gt; {
+            return ::syn::__private::TokenStream::from(err.to_compile_error());
+        }
+    };
+    TokenStream::new()
+}
+
+<span class="boring">const _: () = {
+</span><span class="boring">   extern crate proc_macro;
+</span><span class="boring">   #[rustc_proc_macro_decls]
+</span><span class="boring">   #[allow(deprecated)]
+</span><span class="boring">   static _DECLS: &amp;[proc_macro::bridge::client::ProcMacro] =
+</span><span class="boring">       &amp;[proc_macro::bridge::client::ProcMacro::custom_derive(
+</span><span class="boring">           &quot;MyMacro&quot;,
+</span><span class="boring">           &amp;[],
+</span><span class="boring">           my_macro,
+</span><span class="boring">       )];
+</span><span class="boring">};
+</span></code></pre>
+<p>尽管以下内容不完全与 <code>parse_macro_input!</code> 有关，但是为了深入这段展开的代码，你需要确切地掌握以下内容，并且注意一些事情。</p>
+<h4 id="卫生性"><a class="header" href="#卫生性">卫生性</a></h4>
+<p>涉及 <em>prelude</em> 的几行，以及 <code>#[macro_use] extern crate std;</code> 是每个 rs
+文件都会自动添加的内容，它们用于导入最常用的 items，和 std 的<a href="https://doc.rust-lang.org/std/index.html#macros">所有公开的声明宏</a>。由此，你可以直接使用
+<code>Option</code>、<code>Result</code>（以及它们的成员）这些数据结构与 traits，而不必使用绝对路径或者手动 use。而
+<code>println!</code> 这类常见的宏，以及你可能不会经常使用的宏（比如 <a href="https://doc.rust-lang.org/std/macro.compile_error.html"><code>compile_error!</code></a>），也会被加载进来。</p>
+<p>了解这一点很重要，因为过程宏<a href="https://doc.rust-lang.org/nightly/reference/procedural-macros.html#procedural-macro-hygiene">不是卫生的</a>：
+时刻警醒自己，不要轻易假设使用者的句法上下文，以免让意外的重名标识符污染代码，尽可能在 <strong>生成的标记中</strong> 使用
+<strong><a href="https://doc.rust-lang.org/nightly/reference/paths.html#path-qualifiers">绝对路径</a></strong>、或者添加醒目的标识前后缀 —— 使用 <code>::std::result::Result</code> 而不是 
+<code>Result</code>，对生成的 <strong>内部函数名或内部变量名</strong> 使用 <code>__internal_foo</code> 而不是 <code>foo</code>。</p>
+<h4 id="宏展开"><a class="header" href="#宏展开">宏展开</a></h4>
+<p><a href="https://docs.rs/syn/latest/syn/macro.parse_macro_input.html"><code>parse_macro_input!</code></a> 被展开成以下 match 语句：</p>
+<pre><code class="language-rust ignore">let input = match ::syn::parse_macro_input::parse::&lt;syn::DeriveInput&gt;(input) {
+    ::syn::__private::Ok(data) =&gt; data,
+    ::syn::__private::Err(err) =&gt; {
+        return ::syn::__private::TokenStream::from(err.to_compile_error());
+    }
+};
+</code></pre>
+<p>它是个声明宏，所做的事情很简单，解析成功则取出数据，解析失败则直接返回错误。</p>
+<p>它有两种语法：</p>
+<ul>
+<li><code>($tokenstream:ident as $ty:ty)</code> 或者 <code>($tokenstream:ident)</code>：即把实现 <a href="https://docs.rs/syn/latest/syn/parse/trait.Parse.html"><code>Parse</code></a> trait 
+的类型放到宏的语法内，或者放到模式语法上</li>
+</ul>
+<pre><code class="language-rust ignore">let input = syn::parse_macro_input!(input as syn::DeriveInput);
+let input: syn::DeriveInput = syn::parse_macro_input!(input); // 或者在 binding 时指明类型
+</code></pre>
+<ul>
+<li><code>($tokenstream:ident with $parser:path)</code>：使用具有 <a href="https://docs.rs/syn/latest/syn/parse/trait.Parser.html"><code>Parser</code></a> trait 的类型，这个 trait 专门为函数而设计，
+函数签名满足 <code>FnOnce(ParseStream) -&gt; Result&lt;T&gt;</code> 即可。</li>
+</ul>
+<p>此外，你肯定会好奇这里的 <a href="https://github.com/dtolnay/syn/blob/master/src/export.rs"><code>syn::__private</code></a> 模块，它没什么特别的，里面是
+std、quote、proc_macro2、proc_macro 和 syn 其他模块的 reexport，这印证了第一点的建议：在宏中使用绝对路径。</p>
+<p>你还需要观察到以下三点：</p>
+<ul>
+<li><code>::syn::parse_macro_input::parse</code> 这个内部函数与 <a href="https://docs.rs/syn/latest/syn/fn.parse.html"><code>syn::parse</code></a> 函数几乎别无二致，都把
+<code>proc_macro::TokenStream</code> 转化成 实现了 <a href="https://docs.rs/syn/latest/syn/parse/trait.Parse.html"><code>Parse</code></a> trait 的类型。但它们的唯一的区别在于，
+<code>::syn::parse_macro_input::parse</code> 增加支持解析 <a href="https://docs.rs/syn/latest/syn/type.AttributeArgs.html"><code>AttributeArgs</code></a>，此类型用在解析属性宏参数上。</li>
+<li><code>Err(err)</code> 中的 <code>err</code> 是 <a href="https://docs.rs/syn/latest/syn/parse/struct.Error.html"><code>syn::parse::Error</code></a> 类型，也是 <a href="https://docs.rs/syn/latest/syn/struct.Error.html"><code>syn::Error</code></a> 类型。因为这两个 
+<code>Error</code> 类型都是从 <code>syn::error</code> 私有模块的重导出。
+<a href="https://docs.rs/syn/latest/syn/type.Result.html"><code>syn::Result</code></a> 和 <a href="https://docs.rs/syn/latest/syn/parse/type.Result.html"><code>syn::parse::Result</code></a> 也是同一类型，因为它们是类型别名 + 重导出。</li>
+<li>这个宏使用的另一个限制条件：必须用在返回值为 <code>proc_macro::TokenStream</code> 类型的函数中。</li>
+</ul>
+<h4 id="const-_-技巧"><a class="header" href="#const-_-技巧"><code>const _</code> 技巧</a></h4>
+<p>最后的 <code>const _</code> 部分是过程宏库自动添加的，它用于<a href="https://github.com/rust-lang/rust/blob/0bcacb391b28460f5a50fd627f01f670dfcfc7cc/library/proc_macro/src/bridge/client.rs#L462">初始化</a>过程宏。</p>
+<p>这是一种不起眼的语法，你很少真正手写它，但它却是宏非常常用的技巧。它有正式的名称 —— 
+<a href="https://doc.rust-lang.org/nightly/reference/items/constant-items.html#unnamed-constant">unnamed const</a>，具有很好的性质：可以重复定义。</p>
+<p>无论是过程宏还是声明宏，你都会感受到这种写法给你提供便利：在只能定义 item 
+的地方，它给你一个编译期求值的局部作用域，在其中你可以给某个类型实现 trait，而且可以定义不影响源代码的临时
+const 或 type alias 或数据结构。</p>
+<p>在 <a href="https://github.com/dtolnay/proc-macro-workshop">proc-macro-workshop</a> 的最后一个案例 <a href="https://github.com/dtolnay/proc-macro-workshop#attribute-macro-bitfield">bitfield</a> 中，你势必会使用这种技巧。比如<a href="https://github.com/zjp-CN/proc-macro-workshop/blob/d063faae6b622d146b6d156a514bce976ed7bf40/bitfield/impl/src/spe.rs#L38-L63">这样</a>或者<a href="https://github.com/zjp-CN/proc-macro-workshop/blob/d063faae6b622d146b6d156a514bce976ed7bf40/bitfield/impl/src/bit.rs#L53-L79">这样</a>。</p>
+<h3 id="parse-trait"><a class="header" href="#parse-trait"><code>Parse</code> trait</a></h3>
+<p><a href="https://docs.rs/syn/latest/syn/parse/trait.Parse.html"><code>Parse</code></a> 是 syn 里对外用途最广泛的 trait （之一，另一个对外被广泛使用的 trait 是 <a href="https://docs.rs/quote/*/quote/trait.ToTokens.html"><code>quote::ToTokens</code></a>）。</p>
+<p>它很简单，因为只有一个方法：</p>
+<pre><code class="language-rust ignore">pub trait Parse: Sized {
+    fn parse(input: ParseStream&lt;'_&gt;) -&gt; Result&lt;Self&gt;;
+}
+</code></pre>
+<p>syn 根模块中（<code>syn::*</code>）的大多数结构体和枚举体都实现了此 trait，其功能就是把语法标记的缓冲流解析成语法树。</p>
+<p>一个典型的使用方法如下：</p>
+<pre><code class="language-rust ignore"><span class="boring">// src: https://docs.rs/syn/latest/syn/parse/index.html#example
+</span><span class="boring">use syn::{
+</span><span class="boring">   braced,
+</span><span class="boring">   parse::{Parse, ParseStream},
+</span><span class="boring">   punctuated::Punctuated,
+</span><span class="boring">   token, Field, Ident, Result, Token,
+</span><span class="boring">};
+</span>struct ItemStruct {
+    struct_token: Token![struct],
+    ident: Ident,
+    brace_token: token::Brace,
+    fields: Punctuated&lt;Field, Token![,]&gt;,
+}
+
+impl Parse for ItemStruct {
+    fn parse(input: ParseStream) -&gt; Result&lt;Self&gt; {
+        let content;
+        Ok(ItemStruct {
+            struct_token: input.parse()?,
+            ident: input.parse()?,
+            brace_token: braced!(content in input),
+            fields: content.parse_terminated(Field::parse_named)?,
+        })
+    }
+}
+</code></pre>
+<p>这是 <a href="https://docs.rs/syn/latest/syn/struct.ItemStruct.html#impl-Parse"><code>syn::ItemStruct</code></a> 实现 <code>Parse</code> 的一个简要版本，你只需要使用 <code>input.parse()?</code>
+就能解析一个语法标记。这得益于 Rust 的泛型和 syn 给你写好的基础解析类型及其 <code>Parse</code> 实现。</p>
+<p>这段样例代码不难看懂，但里面的细节得琢磨琢磨。</p>
+<h4 id="token-和-braced"><a class="header" href="#token-和-braced"><code>Token!</code> 和 <code>braced!</code></a></h4>
+<p>这里涉及两个宏：<code>Token!</code> 和 <code>braced!</code>，其中 <code>braced!</code> 与 <code>bracketed!</code> 和 <code>parenthesized!</code> 用法一致。</p>
+<p>使用 <code>cargo expand</code> 展开得到：</p>
+<pre><code class="language-rust ignore">struct ItemStruct {
+    struct_token: ::syn::token::Struct,
+    ident: Ident,
+    brace_token: token::Brace,
+    fields: Punctuated&lt;Field, ::syn::token::Comma&gt;,
+}
+
+impl Parse for ItemStruct {
+    fn parse(input: ParseStream) -&gt; Result&lt;Self&gt; {
+        let content;
+        Ok(ItemStruct {
+            struct_token: input.parse()?,
+            ident: input.parse()?,
+            brace_token: match ::syn::group::parse_braces(&amp;input) {
+                ::syn::__private::Ok(braces) =&gt; {
+                    content = braces.content;
+                    braces.token
+                }
+                ::syn::__private::Err(error) =&gt; {
+                    return ::syn::__private::Err(error);
+                }
+            },
+            fields: content.parse_terminated(Field::parse_named)?,
+        })
+    }
+}
+</code></pre>
+<ul>
+<li><a href="https://docs.rs/syn/latest/syn/macro.Token.html"><code>syn::Token!</code></a> 声明宏做的事情非常简单，把标点或者关键字直接替换成 <a href="https://docs.rs/syn/latest/syn/token/index.html"><code>syn::token</code></a> 模块下对应的解析类型：
+把 <code>Token![struct]</code> 替换成 <code>::syn::token::Struct</code>，把 <code>Token![,]</code> 替换成 
+<code>::syn::token::Comma</code>。任何需要写出 <code>syn::token::xx</code> 的地方，都可以使用这个宏，而无需记住其类型名称。<br />
+作者为了展示这个功能“特别”的宏，特意使用了大写，以及方括号 <code>[]</code>。</li>
+<li><a href="https://docs.rs/syn/latest/syn/macro.braced.html"><code>syn::braced!</code></a> 声明宏与 <code>syn::parse_macro_input!</code> <a href="./syn.html#%E5%AE%8F%E5%B1%95%E5%BC%80">类似</a>，被展开成 match 语句来处理
+<code>Result</code>。但它需要一个预先声明的 <code>content</code> 变量，当 <code>content</code> 经过 <code>braced!</code> 处理之后，为 
+<code>ParseStream</code> 类型，用于解析花括号 <code>{}</code> 内部的标记（如这里的 <code>fields</code>）。<br />
+而 <code>bracketed!</code> 和 <code>parenthesized!</code> 也是一样的用法，区别在于后两者用在解析方括号 <code>[]</code> 和圆括号 <code>()</code> 上。</li>
+</ul>
+<p>接下来，把目光放到主角 <code>ParseStream</code> 类型上。</p>
+<h4 id="parsebuffer-与-parsestream"><a class="header" href="#parsebuffer-与-parsestream"><code>ParseBuffer</code> 与 <code>ParseStream</code></a></h4>
+<p><a href="https://docs.rs/syn/latest/syn/parse/type.ParseStream.html"><code>ParseStream</code></a> 是 <a href="https://docs.rs/syn/latest/syn/parse/struct.ParseBuffer.html"><code>ParseBuffer</code></a> 的共享引用的类型别名：</p>
+<pre><code class="language-rust ignore">type ParseStream&lt;'a&gt; = &amp;'a ParseBuffer&lt;'a&gt;;
+</code></pre>
+<p>我们总是在 syn 的解析函数的函数签名中把 <code>ParseStream</code> 
+作为函数参数，而在解析函数内部，调用其方法时，应该参考 <a href="https://docs.rs/syn/latest/syn/parse/struct.ParseBuffer.html"><code>ParseBuffer</code></a> 的文档。</p>
+<p>此外，<code>ParseStream</code> 是共享引用，它实现了 <a href="https://doc.rust-lang.org/std/marker/trait.Copy.html#impl-Copy-73"><code>Copy</code></a> 
+trait：任何使用它的地方，都是使用引用的复制品，而不具有移动语义。</p>
+<p><a href="https://docs.rs/syn/latest/syn/parse/struct.ParseBuffer.html"><code>ParseBuffer</code></a> 表示缓冲标记流的游标位置，其背后的核心类型是 <a href="https://docs.rs/syn/latest/syn/buffer/struct.Cursor.html"><code>Cursor</code></a> （后面会谈到这个类型）。</p>
+<p>你无法在 syn 之外的代码构造 <code>ParseBuffer</code>，只通过三条公开的解析入口接触到此类型：</p>
+<ol>
+<li><a href="https://docs.rs/syn/latest/syn/macro.parse_macro_input.html"><code>parse_macro_input!</code></a> 用于解析过程宏的输入；</li>
+<li><code>syn::parse*</code> 函数用于中途解析语法；</li>
+<li><a href="https://docs.rs/syn/latest/syn/parse/trait.Parser.html"><code>Parser</code></a> trait 用于抽象所有解析函数。</li>
+</ol>
+<p>它的文档非常友好，这里只概括地浏览一遍：</p>
+<div class="table-wrapper"><table><thead><tr><th>位置</th><th>方法名</th><th>返回值类型<sup class="footnote-reference"><a href="#T-P-R">1</a></sup></th><th>说明</th></tr></thead><tbody>
+<tr><td>推进</td><td>parse(&amp;self)</td><td>Result&lt;T&gt;</td><td>成功解析当前游标下的语法标记之后，把游标位置推进到下一个标记</td></tr>
+<tr><td>推进</td><td>call(&amp;self, f)</td><td>Result&lt;T&gt;</td><td>与 parse 方法类似，但使用一个解析函数 f</td></tr>
+<tr><td>不变</td><td>peek(&amp;self, t)</td><td>bool</td><td>判断下一个标记是否是 t</td></tr>
+<tr><td>不变</td><td>peek2(&amp;self, t)</td><td>bool</td><td>判断下下一个标记是否是 t</td></tr>
+<tr><td>不变</td><td>peek3(&amp;self, t)</td><td>bool</td><td>判断下下下一个标记是否是 t</td></tr>
+<tr><td>不变</td><td>lookahead1(&amp;self)</td><td>Lookahead1</td><td>可调用 <code>.peek()</code> 判断下一个标记是否是一组标记中的某一个，<br>如果不是，可调用 <code>.error()</code> 方法来返回解析错误</td></tr>
+<tr><td>不变</td><td>fork(&amp;self)</td><td>Self</td><td>不建议使用；其实质是将 Self 复制（游标的复制成本很低），但需要注意解析成本；<br>此方法可搭配 <a href="https://docs.rs/syn/latest/syn/parse/discouraged/trait.Speculative.html"><code>Speculative</code></a> trait</td></tr>
+<tr><td>不变</td><td>is_empty(&amp;self)</td><td>bool</td><td>判断解析流是否还有待解析的标记</td></tr>
+<tr><td>不变</td><td>span(&amp;self)</td><td>Span</td><td>如果解析流导了末尾（无待解析的标记），返回 <code>Span::call_site()</code> （过程宏在源码的位置）；<br>否则返回当前游标下（即下一个标记）的 Span</td></tr>
+<tr><td>不变</td><td>error(&amp;self, message)</td><td>syn::Error</td><td>在当前游标位置上返回错误信息</td></tr>
+<tr><td>不变</td><td>cursor(&amp;self)</td><td>Cursor</td><td>底层的解析 API；复制当前游标位置，对其返回的游标做任何操作都不会影响解析流的游标</td></tr>
+<tr><td>结束</td><td>parse_terminated(&amp;self, f)</td><td>Result&lt;Punctuated&lt;T, P&gt;&gt;</td><td>从当前游标解析直到解析流的末尾，解析成 0 次或多次 T，每个 T 的分隔符为 P，<br>且最后的分隔符可以出现也可以不出现</td></tr>
+<tr><td>推进</td><td>step(&amp;self, f)</td><td>Result&lt;R&gt;</td><td>强大但底层的解析 API，但在 syn 之外很少使用（因为你很少直接使用 <code>Cursor</code>）：<br>f 类似于 <code>fn(Cursor) -&gt; Result&lt;(R, Cursor)&gt;</code> 形式即可；解析成功将自动推进游标</td></tr>
+</tbody></table>
+</div>
+<div class="footnote-definition" id="T-P-R"><sup class="footnote-definition-label">1</sup>
+<p>T 和 P 都为实现了 Parse 的类型，即 <code>T: Parse</code>、<code>P: Parse</code>；<code>R</code> 可为任意类型。</p>
+</div>
+<p>你可以观察到，这些方法都只有 <code>&amp;self</code>，而没有 <code>&amp;mut self</code>，而推进游标理应需要独占引用。这是因为 <code>ParseBuffer</code>
+采用了“内部可变性”设计，其背后使用了 <a href="https://doc.rust-lang.org/std/cell/struct.Cell.html"><code>Cell</code></a>。</p>
+<h3 id="parser-trait"><a class="header" href="#parser-trait"><code>Parser</code> trait</a></h3>
+<p><a href="https://docs.rs/syn/latest/syn/parse/trait.Parser.html"><code>Parser</code></a> 是 syn 的解析函数抽象，功能是把标记流转化成语法树节点。</p>
+<p>对 syn 的使用者来说，它可以用在 <code>parse_macro_input!</code>
+上，比如文档给的<a href="https://docs.rs/syn/latest/syn/macro.parse_macro_input.html#usage-with-parser">例子</a>。</p>
+<p>但除此之外，你很少直接使用它的方法，也很少关注哪些函数实现了 <code>Parser</code> trait。比如 
+<a href="https://docs.rs/syn/latest/syn/parse/trait.Parse.html"><code>Parse</code></a> trait 的唯一方法就<a href="https://play.rust-lang.org/?version=stable&amp;mode=debug&amp;edition=2021&amp;gist=54d21dd08bdc98edf4cfc93c9885dfc2">实现了</a> <code>Parser</code> trait，但你
+<a href="https://play.rust-lang.org/?version=stable&amp;mode=debug&amp;edition=2021&amp;gist=f3476f9caab9111bd35d1d59328ccde5">不必写</a>
+<code>ItemStruct::parse.parse2(token_stream)</code>。</p>
+<p>虽然 <code>Parser</code> 就是对 <code>TokenStream -&gt; T</code> 的抽象（<code>TokenStream</code> 来自于过程宏的函数输入参数），而以下实现</p>
+<pre><code class="language-rust ignore">impl&lt;F, T&gt; Parser for F
+  where F: FnOnce(ParseStream&lt;'_&gt;) -&gt; Result&lt;T&gt; 
+</code></pre>
+<p>把这种数据类型的变换转化成 <code>ParseStream -&gt; T</code>，从而 syn 的大部分解析方式都只针对和基于 <code>ParseStream</code> （即
+<a href="./syn.html#parsebuffer-%E4%B8%8E-parsestream"><code>ParseBuffer</code></a>）。</p>
+<p>以至于，即使以下函数实现了 <code>Parser</code> trait，你也几乎只在给某类型实现 <code>Parse</code> trait 时使用它们<sup class="footnote-reference"><a href="#parse-parse_terminated">2</a></sup>：</p>
+<ul>
+<li>syn::punctuated::Punctuated::parse_terminated</li>
+<li>syn::punctuated::Punctuated::parse_separated_nonempty</li>
+<li>syn::Attribute::parse_outer</li>
+<li>syn::Attribute::parse_inner</li>
+<li>syn::Field::parse_named</li>
+<li>syn::Field::parse_unnamed</li>
+<li>syn::Block::parse_within</li>
+</ul>
+<div class="footnote-definition" id="parse-parse_terminated"><sup class="footnote-definition-label">2</sup>
+<p>比如<a href="./syn.html#parse-trait">上述例子</a>的 <code>content.parse_terminated()</code></p>
+</div>
+<hr />
+<p>你可能会发现 syn 的文档中有直接使用 <code>Parser</code> trait 
+方法的<a href="https://docs.rs/syn/latest/syn/parse/index.html#the-parser-trait">例子</a>。</p>
+<p>那的确是一种写法，但缺点也显而易见：<code>Parser</code> 所定义的方法需要消耗 <code>TokenStream</code> 的所有权。</p>
+<p>这意味着每次解析一部分标记，你需要复制一次标记流（复制 <code>TokenStream</code> 的成本比较高，所以才会有 
+<code>ParseBuffer</code> —— 或者说 <a href="https://docs.rs/syn/latest/syn/buffer/index.html"><code>syn::buffer</code></a>）。</p>
+<p>总而言之，<code>Parse</code> 比 <code>Parser</code> 更面向使用者，它们代表不同的抽象。</p>
+<h3 id="synparse-函数"><a class="header" href="#synparse-函数"><code>syn::parse*</code> 函数</a></h3>
+<p>基于 <code>ParseStream</code> 并不是 syn 唯一的解析途径。syn 提供以下解析函数（重点在函数参数上）：</p>
+<div class="table-wrapper"><table><thead><tr><th>函数</th><th>说明</th></tr></thead><tbody>
+<tr><td><a href="https://docs.rs/syn/latest/syn/parse/trait.Parse.html"><code>fn parse&lt;T: Parse&gt;(tokens: TokenStream) -&gt; Result&lt;T&gt;</code></a></td><td>从 <code>proc_macro::TokenStream</code> 中直接解析成 T</td></tr>
+<tr><td><a href="https://docs.rs/syn/latest/syn/parse/trait.Parse.html"><code>fn parse2&lt;T: Parse&gt;(tokens: TokenStream) -&gt; Result&lt;T&gt;</code></a></td><td>从 <code>proc_macro2::TokenStream</code> 中直接解析成 T</td></tr>
+<tr><td><a href="https://docs.rs/syn/latest/syn/fn.parse_str.html"><code>fn parse_str&lt;T: Parse&gt;(s: &amp;str) -&gt; Result&lt;T&gt;</code></a></td><td>从字符串中解析成类型 T</td></tr>
+<tr><td><a href="https://docs.rs/syn/latest/syn/fn.parse_file.html"><code>fn parse_file(content: &amp;str) -&gt; Result&lt;File&gt;</code></a></td><td>从字符串中解析成类型 <a href="https://docs.rs/syn/latest/syn/struct.File.html"><code>File</code></a></td></tr>
+</tbody></table>
+</div>
+<p>它们背后都涉及 <code>Parser</code> trait，可以看做 <code>Parser</code> trait 的用户级接口。
+<code>parse</code> 和 <code>parse2</code> 的区别在于 <code>TokenStream</code> 的来源库不同，通常我们使用 <code>2</code> 后缀区分来自 <code>proc_macro2</code> 
+的内容，尤其是以下写法：</p>
+<pre><code class="language-rust ignore">use proc_macro::TokenStream;
+use proc_macro2::TokenStream as TokenStream2;
+</code></pre>
+<p><code>parse</code> 和 <code>parse_macro_input!</code> 
+的区别已经在<a href="./syn.html#%E5%AE%8F%E5%B1%95%E5%BC%80">宏展开</a>部分说过了，后者可以解析属性宏的参数  <a href="https://docs.rs/syn/latest/syn/type.AttributeArgs.html"><code>AttributeArgs</code></a>：</p>
+<pre><code class="language-rust ignore">use proc_macro::TokenStream;
+
+#[proc_macro_attribute]
+pub fn my_attribute(args: TokenStream, input: TokenStream) -&gt; TokenStream {
+    let args = syn::parse_macro_input!(args as syn::AttributeArgs);
+    /* ... */
+}
+</code></pre>
+<h3 id="parse_quote-与-parse_quote_spanned"><a class="header" href="#parse_quote-与-parse_quote_spanned"><code>parse_quote!</code> 与 <code>parse_quote_spanned!</code></a></h3>
+<p>回顾一下 <a href="https://docs.rs/quote/*/quote/macro.quote.html"><code>quote::quote!</code></a> 的功能：</p>
+<ul>
+<li>它是一个声明宏，其展开的结果是 <code>proc_macro2::TokenStream</code> 类型；</li>
+<li>它有自己的插值语法 <code>#( #val ),*</code>，其中 <code>,</code> 是可选的任意分隔符，且 <code>val</code> 满足以下一个条件即可：
+<ul>
+<li>val 实现了 <code>Iterator</code> trait，且 <code>Iterator::Item</code> 实现了 <a href="https://docs.rs/quote/*/quote/trait.ToTokens.html"><code>ToTokens</code></a> trait</li>
+<li>val 是 <code>Vec</code> 或 <code>slice</code> 或 <code>BTreeSet</code>，且其元素实现了 <a href="https://docs.rs/quote/*/quote/trait.ToTokens.html"><code>ToTokens</code></a> trait</li>
+</ul>
+</li>
+</ul>
+<p>而 <a href="https://docs.rs/quote/*/quote/macro.quote_spanned.html"><code>quote::quote_spanned!</code></a> 比 <code>quote!</code> 增加了 <code>span=&gt;</code> 语法，即给生成的标记附带自定义的 <a href="https://docs.rs/proc-macro2/*/proc_macro2/struct.Span.html"><code>Span</code></a>。</p>
+<p><a href="https://docs.rs/syn/latest/syn/macro.parse_quote.html"><code>parse_quote!</code></a> 与 <code>quote!</code> 的不同之处在于，<code>parse_quote!</code> 的展开结果为 <code>T</code>，<code>T</code> 满足以下一种情况：</p>
+<ul>
+<li><code>T</code> 实现了 <a href="https://docs.rs/syn/latest/syn/parse/trait.Parse.html"><code>Parse</code></a> trait</li>
+<li><code>T</code> 是 <code>Attribute</code> 或 <code>Punctuated&lt;T, P&gt;</code> 或 <code>Vec&lt;Stmt&gt;</code></li>
+</ul>
+<p>它的名字听起来有点奇怪，但你看它的实现，就非常容易理解什么叫做 <code>parse + quote!</code>：</p>
+<pre><code class="language-rust ignore"><span class="boring">// src: https://docs.rs/syn/latest/src/syn/parse_quote.rs.html#70-74
+</span>macro_rules! parse_quote {
+    ($($tt:tt)*) =&gt; {
+        $crate::parse_quote::parse($crate::__private::quote::quote!($($tt)*))
+    };
+}
+
+// $crate::parse_quote::parse 函数定义如下
+// Not public API.
+#[doc(hidden)]
+pub fn parse&lt;T: ParseQuote&gt;(token_stream: proc_macro2::TokenStream) -&gt; T {
+    let parser = T::parse;
+    match parser.parse2(token_stream) {
+        Ok(t) =&gt; t,
+        Err(err) =&gt; panic!(&quot;{}&quot;, err),
+    }
+}
+
+// Not public API.
+#[doc(hidden)]
+pub trait ParseQuote: Sized {
+    fn parse(input: ParseStream) -&gt; Result&lt;Self&gt;;
+}
+
+impl&lt;T: Parse&gt; ParseQuote for T {
+    fn parse(input: ParseStream) -&gt; Result&lt;Self&gt; {
+        &lt;T as Parse&gt;::parse(input)
+    }
+}
+
+impl ParseQuote for Attribute { /* 省略 */}
+impl&lt;T: Parse, P: Parse&gt; ParseQuote for Punctuated&lt;T, P&gt; { /* 省略 */ }
+impl ParseQuote for Vec&lt;Stmt&gt; { /* 省略 */ }
+</code></pre>
+<p>理解了 <code>parse_quote!</code> 与 <code>quote!</code> 之间的区别，那么就能理解 <code>parse_quote_spanned!</code> 与
+<code>quote_spanned!</code> 的区别：它们只在返回类型上不同。</p>
+<p>但，这有什么意义呢？</p>
+<p>大部分情况下你只需关注和使用 <code>quote!</code>，因为它的目的是生成语法标记，也是生成 <code>proc_macro::TokenStream</code>
+的最常见方式。（忽略 <code>proc_macro::TokenStream</code> 与 <code>proc_macro2::TokenStream</code> 之间的差异，它们之间的转化只需要 <code>from-into</code> ）</p>
+<p>有些情况下，当你真正需要构造 syn 的某种类型时，尽管那种类型的字段都是公开的，但你很少直接用结构体语法构造它们。</p>
+<p>假设你想构造闭包表达式  <code>|| a + b</code>，它的直接类型是 <a href="https://docs.rs/syn/latest/syn/struct.ExprClosure.html"><code>ExprClosure</code></a>，你的函数签名需要
+<a href="https://docs.rs/syn/latest/syn/enum.Expr.html"><code>Expr</code></a>，它们之间转化只需要 <code>from-into</code>，但你如何得到 <code>ExprClosure</code>？</p>
+<p>它有 9 个字段，而且 <code>Path</code>、<code>Punctuated</code> 类型手动构造起来有些繁琐。</p>
+<p>有了 <code>parse_quote!</code>，你只需要 <code>let d: syn::Expr = parse_quote! { || a + b };</code> 一行语句即可。</p>
+<p>它完整的<a href="https://play.rust-lang.org/?version=stable&amp;mode=debug&amp;edition=2021&amp;gist=8f8b9504d786e02381f77ea684a3e429">展现</a>如下（点击右上角的取消隐藏看到完整内容）：</p>
+<pre><code class="language-rust ignore">Expr::Closure(
+<span class="boring">   ExprClosure {
+</span><span class="boring">       attrs: [],
+</span><span class="boring">       asyncness: None,
+</span><span class="boring">       movability: None,
+</span><span class="boring">       capture: None,
+</span><span class="boring">       or1_token: Or,
+</span><span class="boring">       inputs: [],
+</span><span class="boring">       or2_token: Or,
+</span><span class="boring">       output: Default,
+</span><span class="boring">       body: Binary(
+</span><span class="boring">           ExprBinary {
+</span><span class="boring">               attrs: [],
+</span><span class="boring">               left: Path(
+</span><span class="boring">                   ExprPath {
+</span><span class="boring">                       attrs: [],
+</span><span class="boring">                       qself: None,
+</span><span class="boring">                       path: Path {
+</span><span class="boring">                           leading_colon: None,
+</span><span class="boring">                           segments: [
+</span><span class="boring">                               PathSegment {
+</span><span class="boring">                                   ident: Ident {
+</span><span class="boring">                                       sym: a,
+</span><span class="boring">                                   },
+</span><span class="boring">                                   arguments: None,
+</span><span class="boring">                               },
+</span><span class="boring">                           ],
+</span><span class="boring">                       },
+</span><span class="boring">                   },
+</span><span class="boring">               ),
+</span><span class="boring">               op: Add(
+</span><span class="boring">                   Add,
+</span><span class="boring">               ),
+</span><span class="boring">               right: Path(
+</span><span class="boring">                   ExprPath {
+</span><span class="boring">                       attrs: [],
+</span><span class="boring">                       qself: None,
+</span><span class="boring">                       path: Path {
+</span><span class="boring">                           leading_colon: None,
+</span><span class="boring">                           segments: [
+</span><span class="boring">                               PathSegment {
+</span><span class="boring">                                   ident: Ident {
+</span><span class="boring">                                       sym: b,
+</span><span class="boring">                                   },
+</span><span class="boring">                                   arguments: None,
+</span><span class="boring">                               },
+</span><span class="boring">                           ],
+</span><span class="boring">                       },
+</span><span class="boring">                   },
+</span><span class="boring">               ),
+</span><span class="boring">           },
+</span><span class="boring">       ),
+</span><span class="boring">   },
+</span>)
+</code></pre>
+<p>在我没有真正搞清楚这几个宏的区别之前，我写了这个例子 <a href="https://github.com/zjp-CN/structs_new">struct_new</a>，为了做同样一件事，它有两个版本：完全不使用
+<code>parse_quote!</code> 和尽可能使用 <code>parse_quote!</code>。</p>
+<p>然而，真正去构建具体的解析类型是必要的吗？</p>
+<p>你的函数可能只需要（或者返回） <code>proc_macro2::TokenStream</code> 类型就好了，不必把这些标记转来转去：
+<code>parse_quote!</code> 只不过是把语法用 <code>quote!</code> 转成 <code>proc_macro2::TokenStream</code>，然后用 <code>Parser</code> 再转成你要的类型。</p>
+<p>请相信 <code>quote!</code> 足够聪明，产生你想要的语法标记。别忘了它的特点 “quasi-quoting”。</p>
+<h2 id="buffer"><a class="header" href="#buffer">buffer</a></h2>
+<p><a href="https://docs.rs/syn/latest/syn/buffer/index.html"><code>syn::buffer</code></a> 模块只有两个结构体：</p>
+<ul>
+<li><a href="https://docs.rs/syn/latest/syn/buffer/struct.TokenBuffer.html"><code>TokenBuffer</code></a> 高效多次遍历标记流的缓冲标记流，只有三个公有方法：
+<ul>
+<li><code>fn new(stream: proc_macro::TokenStream) -&gt; Self</code> 构造缓冲</li>
+<li><code>fn new2(stream: proc_macro2::TokenStream) -&gt; Self</code> 构造缓冲</li>
+<li><code>fn begin(&amp;self) -&gt; Cursor&lt;'_&gt;</code> 从缓冲的第一个标记位置上产生游标，我们就是利用这个游标遍历缓冲标记流</li>
+</ul>
+</li>
+<li><a href="https://docs.rs/syn/latest/syn/buffer/struct.Cursor.html"><code>Cursor</code></a> 高效复制的游标，是不可变数据（缓冲标记流）的共享引用，其背后是裸指针。
+<ul>
+<li>它的亮点是实现了 <code>Copy</code> trait，，这意味着你可以隐式复制来驻足在这个游标上。</li>
+<li>除 <code>empty</code> 方法创建空游标之外，其余所有方法都是 <code>fn xx(self) -&gt; ..</code> 形式。且大部分方法是
+<code>fn xx(self) -&gt; Option&lt;(.., Self)&gt;</code> 形式，这意味着每次调用其方法，都是把这个游标消耗掉，然后得到下一个标记的游标。</li>
+<li>两个游标可以比较相等：当它们在同一个标记流中位置相同，且 Span 相同时，两个游标相等。</li>
+<li>它属于低层级 API，其大部分方法与 <code>proc_macro2</code> 的数据结构有关，所以你想使用它，得掌握 <a href="https://docs.rs/proc-macro2/*/proc_macro2/enum.TokenTree.html"><code>TokenTree</code></a>。</li>
+</ul>
+</li>
+</ul>
+<p>通常，你很少关注到这两个类型，但它们在 syn 中作为底层数据结构被使用。</p>
+<p>一个很好的案例是 proc-macro-workshop 的
+<code>Seq</code>，你可以参考我的<a href="https://github.com/zjp-CN/proc-macro-workshop/blob/master/seq/src/lib.rs">解答</a>。</p>
+<h2 id="visit--visit_mut--fold"><a class="header" href="#visit--visit_mut--fold"><code>visit</code> | <code>visit_mut</code> | <code>fold</code></a></h2>
+<p>这三个模块都是在遍历语法树，且默认以递归形式遍历，它们之间的区别与所有权概念对应：</p>
+<pre><code class="language-rust ignore">// 以共享引用方式遍历语法树节点
+pub trait Visit&lt;'ast&gt; {
+    fn visit_expr_binary(&amp;mut self, node: &amp;'ast ExprBinary) {
+        visit_expr_binary(self, node);
+    }
+
+    /* ... */
+}
+
+// 以独占引用方式遍历语法树节点
+pub trait VisitMut {
+    fn visit_expr_binary_mut(&amp;mut self, node: &amp;mut ExprBinary) {
+        visit_expr_binary_mut(self, node);
+    }
+
+    /* ... */
+}
+
+// 以所有权方式遍历语法树节点
+pub trait Fold {
+    fn fold_expr_binary(&amp;mut self, node: ExprBinary) -&gt; ExprBinary {
+        fold_expr_binary(self, node)
+    }
+
+    /* ... */
+}
+</code></pre>
+<p><a href="https://docs.rs/syn/latest/syn/visit/index.html"><code>visit</code></a> 的方式可以在遍历语法树时，把某种节点类型的引用都提取出来； <a href="https://docs.rs/syn/latest/syn/visit_mut/index.html"><code>visit_mut</code></a> 可以在遍历时修改节点类型；而
+<a href="https://docs.rs/syn/latest/syn/fold/index.html"><code>fold</code></a> 可以遍历时消耗某种节点类型来生成这种节点类型。</p>
+<p>它们的文档都有最简代码样例，很好理解。其他案例可参考</p>
+<ul>
+<li>syn example: <a href="https://github.com/dtolnay/syn/blob/master/examples/trace-var/trace-var/src/lib.rs">trace-var</a></li>
+<li>proc-macro-workshop: <a href="https://github.com/zjp-CN/proc-macro-workshop/blob/master/sorted/src/_fn.rs">sorted</a></li>
+<li><a href="https://docs.rs/you-can/latest/you_can/attr.turn_off_the_borrow_checker.html">you_can::turn_off_the_borrow_checker</a></li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../proc/quote.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                            <a rel="next" href="../proc/proc_macro2.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../proc/quote.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                    <a rel="next" href="../proc/proc_macro2.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        <script src="../ace.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../editor.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../mode-rust.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../theme-dawn.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../theme-tomorrow_night.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../searcher.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+        <script type="text/javascript" src="../theme/pagetoc.js"></script>
+    </body>
+</html>

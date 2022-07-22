@@ -1,0 +1,15 @@
+[package]
+name = "variadic"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "variadic"
+path = "main.rs"
+
+[dependencies]
+_impl = { path = "./_impl" }
+
+[workspace]
+members = ["_impl"]
+

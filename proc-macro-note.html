@@ -1,0 +1,256 @@
+<!DOCTYPE HTML>
+<html lang="zh" class="sidebar-visible no-js ayu">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>过程宏 - rust-note</title>
+        <!-- Custom HTML head -->
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="theme/pagetoc.css">
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "ayu";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('ayu')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="index.html"><strong aria-hidden="true">1.</strong> README</a></li><li class="chapter-item expanded "><a href="proc-macro-note.html" class="active"><strong aria-hidden="true">2.</strong> 过程宏</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="proc/ref.html"><strong aria-hidden="true">2.1.</strong> 基础内容</a></li><li class="chapter-item expanded "><a href="proc/quote.html"><strong aria-hidden="true">2.2.</strong> quote</a></li><li class="chapter-item expanded "><a href="proc/syn.html"><strong aria-hidden="true">2.3.</strong> syn</a></li><li class="chapter-item expanded "><a href="proc/proc_macro2.html"><strong aria-hidden="true">2.4.</strong> proc_macro2</a></li><li class="chapter-item expanded "><a href="proc/study-case.html"><strong aria-hidden="true">2.5.</strong> 案例</a></li><li class="chapter-item expanded "><a href="proc/debug.html"><strong aria-hidden="true">2.6.</strong> 调试</a></li><li class="chapter-item expanded "><a href="proc/FAQ.html"><strong aria-hidden="true">2.7.</strong> FAQ</a></li></ol></li><li class="chapter-item expanded "><a href="dcl.html"><strong aria-hidden="true">3.</strong> 声明宏案例</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="dcl/variadic.html"><strong aria-hidden="true">3.1.</strong> “变长参数”函数与回调</a></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">4.</strong> non-lexical lifetimes (NLL)</div></li><li class="chapter-item expanded "><a href="subtyping.html"><strong aria-hidden="true">5.</strong> Subtyping and Variance</a></li><li class="chapter-item expanded "><a href="forum.html"><strong aria-hidden="true">6.</strong> 官方论坛帖子整理</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="forum/homo-variant.html"><strong aria-hidden="true">6.1.</strong> 从同质 variants 取同类型数据</a></li><li class="chapter-item expanded "><a href="forum/impl-const-param.html"><strong aria-hidden="true">6.2.</strong> 常量泛型参数的分类实现</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.3.</strong> 如何理解生命周期与型变</div></li><li class="chapter-item expanded "><a href="forum/static-promotion.html"><strong aria-hidden="true">6.4.</strong> 静态生命周期提升</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu (default)</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">rust-note</h1>
+
+                    <div class="right-buttons">
+                        <a href="https://github.com/zjp-CN/rust-note" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <h2 id="学习经验"><a class="header" href="#学习经验">学习经验</a></h2>
+<p>过程宏是 Rust 中进阶的内容，它是声明宏的拓展。但它的学习资料比较少，我整理了一些：你可以在
+<a href="https://www.yuque.com/zhoujiping/programming/rust-materials">此链接</a> 网页中搜索【过程宏】找到。</p>
+<p>如果你想编写过程宏，那么以下内容是必须掌握的：</p>
+<ol>
+<li>Rust 几乎所有的语法：因为 Rust 的宏就是在操作 AST
+（或者说 CST？），所以掌握源代码的语法结构是第一步。当你能自如地查阅 
+<a href="https://doc.rust-lang.org/nightly/reference">Reference</a> 一书，那么这一步就成功了。</li>
+<li>Rust 的声明宏：声明宏可以单独学习，它完全不涉及过程宏；但过程宏涉及声明宏，而且它们之间有许多相似的地方。
+你可以不需要掌握声明宏高阶模式部分，但你至少要掌握声明宏最通用的部分。
+当你对 <a href="https://zjp-cn.github.io/tlborm/">The Little Book of Rust Macros</a>
+一书中的大部分内容熟悉时，你可以准备迎接过程宏了。</li>
+</ol>
+<p>对我来说，学习过程宏的过程：</p>
+<ol>
+<li>从 <a href="https://doc.rust-lang.org/book/ch19-06-macros.html">Rust Book: ch19-06-macros</a> 中知道过程宏的分类。</li>
+<li>从 <a href="https://doc.rust-lang.org/nightly/reference/procedural-macros.html">Reference: procedural-macros</a>
+中知道过程宏真正的编写框架。</li>
+<li>从 <a href="https://github.com/dtolnay/syn/tree/master/examples">syn/examples</a> 
+中学习如何在特定任务下真实地编写过程宏。你对这四个例子理解地越仔细，那么你就能越快地上手过程宏。</li>
+<li>最重要的资料是文档：<a href="https://docs.rs/quote/latest/quote/">quote</a> 和 <a href="https://docs.rs/syn/latest/syn/">syn</a>
+。过程宏不像声明宏那样开箱即用，你需要引入别的库，所以你需要掌握这两个库。</li>
+</ol>
+<p>谨记 dtolnay 在 <a href="https://github.com/dtolnay/proc-macro-workshop">proc-macro-workshop</a> 教程中的这些话：</p>
+<blockquote>
+<p>There is only one profound insight about Rust macro development, and this
+test case begins to touch on it: what makes someone an &quot;expert at macros&quot;
+mostly has nothing to do with how good they are &quot;at macros&quot;.</p>
+<p>95% of what enables people to write powerful and user-friendly macro
+libraries is in their mastery of everything else about Rust outside of
+macros, and their creativity to put together ordinary language features in
+interesting ways that may not occur in handwritten code.</p>
+<p>You may occasionally come across procedural macros that you feel are really
+advanced or magical. If you ever feel this way, I encourage you to take a
+closer look and you'll discover that as far as the macro implementation
+itself is concerned, none of those libraries are doing anything remotely
+interesting. They always just parse some input in a boring way, crawl some
+syntax trees in a boring way to find out about the input, and paste together
+some output code in a boring way exactly like what you've been doing so far.
+In fact once you've made it this far in the workshop, it's okay to assume you
+basically know everything there is to know about the mechanics of writing
+procedural macros.</p>
+<p>To the extent that there are any tricks to macro development, all of them
+revolve around <em>what</em> code the macros emit, not <em>how</em> the macros emit the
+code. This realization can be surprising to people who entered into macro
+development with a vague notion of procedural macros as a &quot;compiler plugin&quot;
+which they imagine must imply all sorts of complicated APIs for <em>how</em> to
+integrate with the rest of the compiler. That's not how it works. The only
+thing macros do is emit code that could have been written by hand. If you
+couldn't have come up with some piece of tricky code from one of those
+magical macros, learning more &quot;about macros&quot; won't change that; but learning
+more about every other part of Rust will. Inversely, once you come up with
+what code you want to generate, writing the macro to generate it is generally
+the easy part.</p>
+<p>src: <a href="https://github.com/dtolnay/proc-macro-workshop/blob/master/bitfield/tests/04-multiple-of-8bits.rs">bitfield/tests/04-multiple-of-8bits.rs</a></p>
+</blockquote>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="index.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                            <a rel="next" href="proc/ref.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="index.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                    <a rel="next" href="proc/ref.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        <script src="ace.js" type="text/javascript" charset="utf-8"></script>
+        <script src="editor.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mode-rust.js" type="text/javascript" charset="utf-8"></script>
+        <script src="theme-dawn.js" type="text/javascript" charset="utf-8"></script>
+        <script src="theme-tomorrow_night.js" type="text/javascript" charset="utf-8"></script>
+        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+        <script type="text/javascript" src="theme/pagetoc.js"></script>
+    </body>
+</html>

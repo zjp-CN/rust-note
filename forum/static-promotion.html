@@ -1,0 +1,400 @@
+<!DOCTYPE HTML>
+<html lang="zh" class="sidebar-visible no-js ayu">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>静态生命周期提升 - rust-note</title>
+        <!-- Custom HTML head -->
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/pagetoc.css">
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "ayu";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('ayu')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../index.html"><strong aria-hidden="true">1.</strong> README</a></li><li class="chapter-item expanded "><a href="../proc-macro-note.html"><strong aria-hidden="true">2.</strong> 过程宏</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../proc/ref.html"><strong aria-hidden="true">2.1.</strong> 基础内容</a></li><li class="chapter-item expanded "><a href="../proc/quote.html"><strong aria-hidden="true">2.2.</strong> quote</a></li><li class="chapter-item expanded "><a href="../proc/syn.html"><strong aria-hidden="true">2.3.</strong> syn</a></li><li class="chapter-item expanded "><a href="../proc/proc_macro2.html"><strong aria-hidden="true">2.4.</strong> proc_macro2</a></li><li class="chapter-item expanded "><a href="../proc/study-case.html"><strong aria-hidden="true">2.5.</strong> 案例</a></li><li class="chapter-item expanded "><a href="../proc/debug.html"><strong aria-hidden="true">2.6.</strong> 调试</a></li><li class="chapter-item expanded "><a href="../proc/FAQ.html"><strong aria-hidden="true">2.7.</strong> FAQ</a></li></ol></li><li class="chapter-item expanded "><a href="../dcl.html"><strong aria-hidden="true">3.</strong> 声明宏案例</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../dcl/variadic.html"><strong aria-hidden="true">3.1.</strong> “变长参数”函数与回调</a></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">4.</strong> non-lexical lifetimes (NLL)</div></li><li class="chapter-item expanded "><a href="../subtyping.html"><strong aria-hidden="true">5.</strong> Subtyping and Variance</a></li><li class="chapter-item expanded "><a href="../forum.html"><strong aria-hidden="true">6.</strong> 官方论坛帖子整理</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../forum/homo-variant.html"><strong aria-hidden="true">6.1.</strong> 从同质 variants 取同类型数据</a></li><li class="chapter-item expanded "><a href="../forum/impl-const-param.html"><strong aria-hidden="true">6.2.</strong> 常量泛型参数的分类实现</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.3.</strong> 如何理解生命周期与型变</div></li><li class="chapter-item expanded "><a href="../forum/static-promotion.html" class="active"><strong aria-hidden="true">6.4.</strong> 静态生命周期提升</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu (default)</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">rust-note</h1>
+
+                    <div class="right-buttons">
+                        <a href="https://github.com/zjp-CN/rust-note" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <!-- Page table of contents -->
+                        <div class="sidetoc"><nav class="pagetoc"></nav></div>
+
+                        <h1 id="static-promotion"><a class="header" href="#static-promotion">static promotion</a></h1>
+<h2 id="临时引用的静态生命周期提升"><a class="header" href="#临时引用的静态生命周期提升">临时引用的静态生命周期提升</a></h2>
+<p>在 <a href="https://rust-lang.github.io/rfcs/1414-rvalue_static_promotion.html">RFC 1414: <strong>rvalue static promotion</strong></a> 中实现了右值的静态生命周期提升功能，也就是将
+<a href="https://doc.rust-lang.org/reference/const_eval.html#constant-expressions">常量表达式</a> 的右值提升到静态内存 (static memory) 而不是放在栈槽 (stack slot) 中，并通过直接创建 
+<code>'static</code> 引用来暴露这些值。典型例子是支持类似于下面的代码：</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let x: &amp;'static u32 = &amp;42;
+fn return_static_ref() -&gt; &amp;'static u32 { &amp;42 }
+
+// 可把 u32 换做任意数据结构
+struct Custom(u32);
+let x: &amp;'static Custom = &amp;Custom(42);
+fn return_static_ref_custom() -&gt; &amp;'static Custom { &amp;Custom(42) }
+
+<span class="boring">use std::cell::Cell;
+</span>type Enum = Option&lt;Cell&lt;u32&gt;&gt;;
+let x: &amp;'static Enum = &amp;None;
+fn return_static__ref_none() -&gt; &amp;'static Enum { &amp;None }
+<span class="boring">}
+</span></code></pre></pre>
+<p>换言之，对于 <code>let x: &amp;u32 = &amp;42;</code> 数据 <code>42</code> 被放置在栈上，而 <code>let x: &amp;'static u32 = &amp;42;</code> 则把数据 <code>42</code>
+放置于静态内存，所以显然后者的生命周期可以比前者长，这对于返回 <code>&amp;'static T</code> 的函数来说尤其有用。</p>
+<p>此外，RFC 还总结了一条规则：</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// 点击右上角按钮，可以正常运行这段代码
+
+<span class="boring">use std::mem::size_of;
+</span><span class="boring">type T = usize;
+</span><span class="boring">const CONST_EXPR: &amp;'static usize = &amp;size_of::&lt;usize&gt;();
+</span>
+// 如果这行编译通过
+const X: &amp;'static T = &amp;CONST_EXPR;
+
+// 那么这行也应该编译通过
+let x: &amp;'static T = &amp;CONST_EXPR;
+<span class="boring">}
+</span></code></pre></pre>
+<h2 id="不是所有引用都有资格被提升"><a class="header" href="#不是所有引用都有资格被提升">不是所有引用都有资格被提升</a></h2>
+<p>首先，最重要的前提是，此功能只针对常量表达式的值：常见的常量表达式来源有 literals、constants、statics、<code>const fn</code>。</p>
+<p>其次，在 RFC 中提到了一种特殊情况：</p>
+<p>常量表达式中如果含 <code>UnsafeCell { ... }</code> 的构造表达式，那么临时的引用不能被提升为静态生命周期引用。</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span><span class="boring">use std::cell::{Cell, UnsafeCell};
+</span>
+// error[E0515]: cannot return reference to temporary value
+fn not_allowed() -&gt; &amp;'static Option&lt;UnsafeCell&lt;u32&gt;&gt; { &amp;Some(UnsafeCell::new(42)) }
+
+// Cell::new(...) 背后使用了 UnsafeCell，所以也无法被提升
+fn not_allowed_too() -&gt; &amp;'static Option&lt;Cell&lt;u32&gt;&gt; { &amp;Some(Cell::new(42)) }
+<span class="boring">}
+</span></code></pre></pre>
+<p>这是因为要确保被提升的值在引用后是真正不可变的。</p>
+<h2 id="在常量中出现-panic"><a class="header" href="#在常量中出现-panic">在常量中出现 panic</a></h2>
+<p>另一个 <a href="https://rust-lang.github.io/rfcs/2345-const-panic.html">RFC 2345: const panic</a> 规定了
+<code>panic!</code> 可用于 constants、<code>const fn</code> 等场合（基于它的各种宏 <code>assert*</code> 也可用于同样的场合），并且
+<strong>其结果为编译时错误</strong>。</p>
+<p>所以，如果碰到 <code>panic!</code> 的常量表达式，临时的引用无法提升为 <code>'static</code>：</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>const fn size_of&lt;T&gt;() -&gt; usize { panic!() }
+
+// RFC 2345 规定的编译失败
+// error[E0080]: evaluation of constant value failed
+const X: &amp;'static usize = &amp;size_of::&lt;()&gt;();
+
+// 编译失败，无法提升为 'static
+// error[E0716]: temporary value dropped while borrowed
+let x: &amp;'static usize = &amp;size_of::&lt;()&gt;();
+<span class="boring">}
+</span></code></pre></pre>
+<p>注意，static promotion 所涉及的是引用（准确说是共享引用 <code>&amp;T</code>）提升生命周期的问题：</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>const fn size_of&lt;T&gt;() -&gt; usize { panic!() }
+
+// RFC 2345 规定的编译失败
+// error[E0080]: evaluation of constant value failed
+const X: usize = size_of::&lt;()&gt;();
+
+// 下面的代码与 static promotion 无关
+// 编译通过，但运行失败
+let x: usize = size_of::&lt;()&gt;();
+let x: &amp;usize = &amp;size_of::&lt;()&gt;();
+<span class="boring">}
+</span></code></pre></pre>
+<h2 id="有资格的引用不一定被自动提升"><a class="header" href="#有资格的引用不一定被自动提升">有资格的引用不一定被自动提升</a></h2>
+<p>这部分内容似乎没有在 RFC 中被提及。</p>
+<p>从一个简单的例子出发。</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use std::mem::size_of;
+
+// 下面两行代码符合第一部分提到的规则
+const _: &amp;'static usize = &amp;size_of::&lt;usize&gt;();
+let _: &amp;'static usize = &amp;size_of::&lt;usize&gt;();
+<span class="boring">}
+</span></code></pre></pre>
+<p>但是，考虑以下内容（下面对 static promotion 简称为“静态提升”）：</p>
+<pre><pre class="playground"><code class="language-rust editable">// 此代码块可直接编辑
+
+fn main() {
+    // 代码正常
+    const _: &amp;'static usize = &amp;size_of::&lt;usize&gt;();
+
+    // 下面的代码却 **不符合** 第一部分提到的规则
+    // error[E0716]: temporary value dropped while borrowed
+    let _: &amp;'static usize = &amp;size_of::&lt;usize&gt;();
+}
+
+// 对 std::mem::size_of 进行封装，却无法“静态提升”
+const fn size_of&lt;T&gt;() -&gt; usize { std::mem::size_of::&lt;T&gt;() }
+// 甚至对于简单的 literal，也无法“静态提升”
+// const fn size_of&lt;T&gt;() -&gt; usize { 0 }
+</code></pre></pre>
+<p>回顾第一部分 RFC 提到的规则：</p>
+<pre><code class="language-rust ignore">// 如果这行编译通过
+const X: &amp;'static T = &amp;CONST_EXPR;
+
+// 那么这行也应该编译通过
+let x: &amp;'static T = &amp;CONST_EXPR;
+</code></pre>
+<p><code>const _: &amp;'static usize = &amp;size_of::&lt;usize&gt;();</code> 这行说明 <code>&amp;size_of::&lt;usize&gt;()</code> 是有资格进行“静态提升”的，而编译器对
+<code>let _: &amp;'static usize = &amp;size_of::&lt;usize&gt;();</code> 没能把常量函数 <code>size_of</code>
+的返回值视为常量，而是视为一个普通函数的值，所以这个值被放在了栈上，从而是“临时的”，而不是“静态的”。</p>
+<p>有一些方法可以解决，基本逻辑是把常量函数的返回值显式地告知编译器为常量。</p>
+<p>注意：</p>
+<ul>
+<li><code>let _: &amp;'static T</code> 与 <code>fn f() -&gt; &amp;'static T</code> 在静态提升中差不多，都是把临时引用提升为静态引用。</li>
+<li>链接的例子基于一个关于 <a href="https://users.rust-lang.org/t/custom-vtables-with-integers">vtable 构造技巧的帖子</a>，
+本文也是受这则帖子及其讨论梳理出来的。</li>
+</ul>
+<h3 id="方法一constant-items"><a class="header" href="#方法一constant-items">方法一：<code>constant</code> items</a></h3>
+<pre><pre class="playground"><code class="language-rust editable">// 此代码块可直接编辑
+
+fn main() {
+    const X: usize = size_of::&lt;usize&gt;();
+    // 当然也可以：
+    // const X: &amp;'static usize = &amp;size_of::&lt;usize&gt;();
+    let _: &amp;'static usize = &amp;X;
+}
+
+const fn size_of&lt;T&gt;() -&gt; usize { std::mem::size_of::&lt;T&gt;() }
+// const fn size_of&lt;T&gt;() -&gt; usize { 0 }
+</code></pre></pre>
+<p>这其实是实施静态提升功能前的做法，所以这是最基本的办法。</p>
+<p>缺点在于，如果碰到 <code>fn f&lt;T&gt;() -&gt; &amp;'static ...</code> 这带类型参数的函数，其函数内部无法使用 constants（
+<a href="https://play.rust-lang.org/?version=stable&amp;mode=debug&amp;edition=2021&amp;gist=0abfbff9738af2fcfb4f36b310c51fe8">vtable 例子</a> ）。</p>
+<pre><pre class="playground"><code class="language-rust editable">// 此代码块可直接编辑
+
+fn f&lt;T&gt;() -&gt; &amp;'static usize {
+    // error[E0401]: can't use generic parameters from outer function
+    const X: usize = size_of::&lt;T&gt;();
+    &amp;X
+}
+
+const fn size_of&lt;T&gt;() -&gt; usize { std::mem::size_of::&lt;T&gt;() }
+// const fn size_of&lt;T&gt;() -&gt; usize { 0 }
+fn main() { }
+</code></pre></pre>
+<h3 id="方法二associated-constants"><a class="header" href="#方法二associated-constants">方法二：<code>associated constants</code></a></h3>
+<p>关联常量有两类定义：<code>impl Type</code> 中、<code>impl Trait for Type</code> 中。</p>
+<pre><pre class="playground"><code class="language-rust editable">// 此代码块可直接编辑
+
+fn f&lt;T&gt;() -&gt; &amp;'static usize {
+    struct Type&lt;T&gt;(*mut Self);
+    impl&lt;T&gt; Type&lt;T&gt; {
+        const X: usize = size_of::&lt;T&gt;();
+    }
+    &amp;Type::&lt;T&gt;::X
+}
+
+const fn size_of&lt;T&gt;() -&gt; usize { std::mem::size_of::&lt;T&gt;() }
+// const fn size_of&lt;T&gt;() -&gt; usize { 0 }
+fn main() { }
+</code></pre></pre>
+<pre><pre class="playground"><code class="language-rust editable">// 此代码块可直接编辑
+
+fn f&lt;T&gt;() -&gt; &amp;'static usize {
+    trait Trait&lt;T&gt; {
+        const X: usize = size_of::&lt;T&gt;();
+    }
+    struct Type;
+    impl&lt;T&gt; Trait&lt;T&gt; for Type {}
+    &amp;&lt;Type as Trait&lt;T&gt;&gt;::X
+}
+
+const fn size_of&lt;T&gt;() -&gt; usize { std::mem::size_of::&lt;T&gt;() }
+// const fn size_of&lt;T&gt;() -&gt; usize { 0 }
+fn main() {}
+</code></pre></pre>
+<p>这解决了方法一中的常量无法使用类型参数的问题。（vtable 例子 <a href="https://users.rust-lang.org/t/custom-vtables-with-integers/78508/5">type-assoc-const</a> 和 <a href="https://users.rust-lang.org/t/custom-vtables-with-integers/78508/2">trait-assoc-const</a>）</p>
+<h3 id="方法三-const-block"><a class="header" href="#方法三-const-block">方法三： <code>const</code> block</a></h3>
+<pre><pre class="playground"><code class="language-rust editable">// 此代码块可直接编辑，且需要 nightly rustc
+
+#![feature(inline_const)]
+
+fn f&lt;T&gt;() -&gt; &amp;'static usize { const { &amp;size_of::&lt;T&gt;() } }
+
+const fn size_of&lt;T&gt;() -&gt; usize { std::mem::size_of::&lt;T&gt;() }
+// const fn size_of&lt;T&gt;() -&gt; usize { 0 }
+fn main() {}
+</code></pre></pre>
+<p>这是最简洁的方法。详见 <a href="https://rust-lang.github.io/rfcs/2920-inline-const.html">RFC 2920</a>。（vtable <a href="https://users.rust-lang.org/t/custom-vtables-with-integers/78508/7">例子</a>）</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../forum/impl-const-param.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../forum/impl-const-param.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        <script src="../ace.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../editor.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../mode-rust.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../theme-dawn.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../theme-tomorrow_night.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../searcher.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+        <script type="text/javascript" src="../theme/pagetoc.js"></script>
+    </body>
+</html>
