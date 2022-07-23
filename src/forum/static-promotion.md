@@ -156,7 +156,7 @@ let x: &'static T = &CONST_EXPR;
 * 链接的例子基于一个关于 [vtable 构造技巧的帖子](https://users.rust-lang.org/t/custom-vtables-with-integers)，
   本文也是受这则帖子及其讨论梳理出来的。
 
-### 方法一：`constant` items
+### 方法一：`const` items
 
 ```rust,editable
 // 此代码块可直接编辑
