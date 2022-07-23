@@ -21,8 +21,10 @@ let x: &'static Enum = &None;
 fn return_static__ref_none() -> &'static Enum { &None }
 ```
 
-换言之，对于 `let x: &u32 = &42;` 数据 `42` 被放置在栈上，而 `let x: &'static u32 = &42;` 则把数据 `42`
+换言之，对于 `let x: &u32 = &...;` 数据 `...` 可能被放置在栈上[^&42]，而 `let x: &'static u32 = &...;` 则把数据 `...`
 放置于静态内存，所以显然后者的生命周期可以比前者长，这对于返回 `&'static T` 的函数来说尤其有用。
+
+[^&42]: 如果一个 `const fn` 返回 42，那么该常量函数返回的值不一定在静态区，见[最后部分](static-promotion.md#有资格的引用不一定被自动提升)。
 
 此外，RFC 还总结了一条规则：
 
