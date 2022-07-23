@@ -318,4 +318,6 @@ const _: &'static i32 = &(1 / (1 + 1)); // ok: 明确要求编译期求值
 
 // error[E0716]: temporary value dropped while borrowed
 let _: &'static i32 = &(1 / (1 + 1)); // y 需要进一步计算，不支持隐式提升
+// error[E0515]: cannot return reference to temporary value
+fn f() -> &'static i32 { &(1 / (1 + 1)) } // 理由同上
 ```
