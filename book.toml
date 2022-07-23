@@ -18,6 +18,7 @@ title = "rust-note"
 [output.html]
 default-theme = "ayu"
 git-repository-url = "https://github.com/zjp-CN/rust-note"
+edit-url-template = "https://github.com/zjp-CN/rust-note/edit/main/{path}"
 additional-css = ["theme/pagetoc.css"]
 additional-js = ["theme/pagetoc.js"]
 
