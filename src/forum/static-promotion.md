@@ -174,7 +174,7 @@ const fn size_of<T>() -> usize { std::mem::size_of::<T>() }
 
 这其实是实施静态提升功能前的做法，所以这是最基本的办法。
 
-缺点在于，如果碰到 `fn f<T>() -> &'static ...` 这带类型参数的函数，其函数内部无法使用 constants（
+缺点在于，如果碰到 `fn f<T>() -> &'static ...` 这类带类型参数的函数，其函数内部的 constants 无法直接使用类型参数（
 [vtable 例子](https://play.rust-lang.org/?version=stable&mode=debug&edition=2021&gist=0abfbff9738af2fcfb4f36b310c51fe8) ）。
 
 ```rust,editable
