@@ -1,4 +1,4 @@
-# static promotion
+# RFC 1414: static promotion
 
 ## 临时引用的静态生命周期提升
 
@@ -48,7 +48,7 @@ let x: &'static T = &CONST_EXPR;
 
 ## 不是所有引用都有资格被提升
 
-首先，最重要的前提是，此功能只针对常量表达式的值：常见的常量表达式来源有 literals、constants、statics、`const fn`。
+首先，最重要的前提是，此功能只针对 **常量表达式的值**：常见的常量表达式来源有 literals、constants、statics、`const fn`。
 
 其次，在 RFC 中提到了一种特殊情况：
 
@@ -149,7 +149,11 @@ let x: &'static T = &CONST_EXPR;
 `let _: &'static usize = &size_of::<usize>();` 没能把常量函数 `size_of`
 的返回值视为常量，而是视为一个普通函数的值，所以这个值被放在了栈上，从而是“临时的”，而不是“静态的”。
 
-有一些方法可以解决，基本逻辑是把常量函数的返回值显式地告知编译器为常量。
+事实上，对于 `const fn`，除非它被赋予 `#[rustc_promotable]` 属性，否则无法被隐式提升（等会解释这个概念）：
+
+`std::mem::size_of` 具有这个属性，而任何自定义（包括封装）的 `size_of` 不具有。
+
+有一些方法可以解决，基本逻辑是 **把常量函数的返回值显式地告知编译器为常量**。
 
 注意：
 * `let _: &'static T` 与 `fn f() -> &'static T` 在静态提升中差不多，都是把临时引用提升为静态引用。
@@ -190,7 +194,6 @@ const fn size_of<T>() -> usize { std::mem::size_of::<T>() }
 // const fn size_of<T>() -> usize { 0 }
 fn main() { }
 ```
-
 
 ### 方法二：`associated constants`
 
@@ -252,3 +255,67 @@ fn main() {}
 这是最简洁的方法。详见 [RFC 2920]。（vtable [例子](https://users.rust-lang.org/t/custom-vtables-with-integers/78508/7)）
 
 [RFC 2920]: https://rust-lang.github.io/rfcs/2920-inline-const.html
+
+# RFC 3027: infallible promotion
+
+[RFC 3027]: https://rust-lang.github.io/rfcs/3027-infallible-promotion.html
+
+在 [RFC 3027] 中，规定了以下术语：
+* 生命周期延长 (lifetime extension)：使引用具有 `'static` 生命周期
+* 常量提升 (promotion)：将部分代码提取为常量的底层机制（这个过程是由编译器自动完成的，无需手写）
+
+它们之间的关系是：生命周期延长（即 RFC 1414）是提升的一个主要应用，如果从用户的语法层面看，可以视为：
+
+```rust
+let _: &'static u32 = &42; // lifetime extension
+let _: &'static u32 = {
+    const X: u32 = 42; // promotion
+    &X // lifetime extension
+};
+```
+
+这是一个相当复杂的 RFC（涉及许多细节问题），并且还在进展中。
+
+与之密切相关的 [const-eval] 文档进一步阐述了提升的限制，这被称作 [promotability]，比如
+1. 必须能把表达式放入所谓的 [const]：所以不允许比较指针、不允许内部可变性，还要注意 `Send`、`Drop`、`static mut` 等问题
+2. panic、overflow、边界检查不通过等情况下，不能被提升
+3. 要满足 [const safety]
+4. 以及其他一些规则
+
+[const-eval]: https://github.com/rust-lang/const-eval
+
+[promotability]: https://github.com/rust-lang/const-eval/blob/master/promotion.md#promotability
+
+[const]: https://github.com/rust-lang/const-eval/blob/master/const.md
+
+[const safety]: https://github.com/rust-lang/const-eval/blob/master/const_safety.md
+
+回到 RFC 3027，其中区分了两种提升：
+
+- 显式提升 (explicit promotion)：指必须提升成常量，比如 `#[rustc_args_required_const]` 和 `asm!`
+- 隐式提升 (implicit promotion)：指可以提升成常量，比如引用不必是 `'static`、数组的 repeat expression 是 `Copy` 或者 repeat count 不超过 1 时
+
+显式提升必须在编译时知道该值，因此如果无法确定该值，停止编译是正确的行为。
+
+而隐式提升的典型案例是 `const fn` 必须在具有 `#[rustc_promotable]` 属性的情况下才具备隐式提升的资格。（见 [有资格的引用不一定被自动提升] 一节）
+
+此外，隐式提升的一个前提是，表达式必须不能求值失败。这方面有诸多限制，首先需要区分哪些操作一定不会失败，哪些操作可能导致失败。（这在 RFC 中具体罗列了，这里不重复列了）
+
+最终的部分结果是：
+1. （自定义） `const fn` 因不具有 `#[rustc_promotable]` 而不具备隐式提升的资格，必须放入常量中明确要求编译期求值
+2. 除法[^Division]、取模、索引操作不具备隐式提升的资格，也必须放入常量中明确要求编译期求值
+
+解决方案仍然可以参照 [有资格的引用不一定被自动提升] 一节。
+
+[有资格的引用不一定被自动提升]: static-promotion.md#有资格的引用不一定被自动提升
+
+[^Division]: 小细节补充：对于简单的 `x/y`，只要 `y` 不为 0 的整数字面值，其结果依然可以被提升，见 [pull/80579](https://github.com/rust-lang/rust/pull/80579)：
+```rust
+let _: &'static i32 = &(1 / 2); // ok
+let _: &'static i32 = &((1-1) / 2); // ok
+
+const _: &'static i32 = &(1 / (1 + 1)); // ok
+
+// error[E0716]: temporary value dropped while borrowed
+let _: &'static i32 = &(1 / (1 + 1));
+```
