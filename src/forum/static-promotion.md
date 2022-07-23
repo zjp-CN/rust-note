@@ -311,11 +311,11 @@ let _: &'static u32 = {
 
 [^Division]: 小细节补充：对于简单的 `x/y`，只要 `y` 不为 0 的整数字面值，其结果依然可以被提升，见 [pull/80579](https://github.com/rust-lang/rust/pull/80579)：
 ```rust
-let _: &'static i32 = &(1 / 2); // ok
-let _: &'static i32 = &((1-1) / 2); // ok
+let _: &'static i32 = &(1 / 2); // ok: 隐式提升
+let _: &'static i32 = &((1-1) / 2); // ok: 隐式提升
 
-const _: &'static i32 = &(1 / (1 + 1)); // ok
+const _: &'static i32 = &(1 / (1 + 1)); // ok: 明确要求编译期求值
 
 // error[E0716]: temporary value dropped while borrowed
-let _: &'static i32 = &(1 / (1 + 1));
+let _: &'static i32 = &(1 / (1 + 1)); // y 需要进一步计算，不支持隐式提升
 ```
