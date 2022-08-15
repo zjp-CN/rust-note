@@ -1,5 +1,6 @@
 # Subtyping and Variance
 
+## 子类型
 
 `T: U` 的含义：
 - `T` 是 `U` 的子类型 (subtype)，或者说 `U` 是 `T` 的超类型 (supertype)
@@ -15,24 +16,27 @@
 - `'big` 包含 `'small`，或者说 `'big` 的生命周期至少和 `'small` 一样长[^big-small]
 - 换言之，我们可以忘记某物要存活 `'big` 那么长，只需要记住某物需要存活 `'small` 那么长
 
-[^big-small]: `'big` contains/outlives/lives at least as long as `'small`
+[^big-small]: 英文表述为 `'big` outlives/lives at least as long as `'small`
 
-variance:
-- is a set of rules governing how subtyping should compose
-- defines situations where subtyping should be disabled
-- is a property that type constructors have with respect to their arguments
-- A type constructor `F`'s variance is how the subtyping of its inputs affects the subtyping of its outputs
-- covariance is, in practical terms, "the" variance
-- Almost all consideration of variance is in terms of whether something should be covariant or invariant
-- witnessing contravariance is quite difficult in Rust, though it does in fact exist
+## 型变
 
-A type constructor:
-- is any generic type with unbound arguments
-- For instance
-    - `Vec` is a type constructor that takes a type `T` and returns `Vec<T>`
-    - `&` and `&mut` are type constructors that take two inputs: a lifetime, and a type to point to
-- For convenience often refer to `F<T>` as a type constructor just so that we can easily talk about `T`
+Nomicon 一书这样描述和总结了 Rust 中的型变：
 
+* 是一组子类型应该如何组织起来的规则
+* 定义了禁用子类型的情况
+* 是类型构造器相对于其参数所具有的属性
+* 类型构造器 `F` 的型变，就是指其输入的子类型如何影响其输出的子类型
+* 在实际场景中，型变 (variance) 这一术语（很多情况下）指“协变” (covariance)
+* 几乎所有对型变的考虑都是关于某事应该是协变的还是不变的
+* 在 Rust 中见证逆变是相当困难的，尽管它实际上的确存在
+
+类型构造器 (type constructor)：
+
+- 是任何不限制其参数 (unbound arguments) 的泛型类型
+- 例如：
+  - `Vec` 是一个类型构造器，它接受类型 `T` 并返回 `Vec<T>`
+  - `&` 和 `&mut` 是接受两个输入的类型构造器：生命周期和被指向的类型
+- 为了方便起见，通常将 `F<T>` 称为类型构造器，这样我们就可以轻松地谈论 `T`
 
 | type constructor | variance                                      | the subtyping of its outputs[^given] | memo                             |
 |:----------------:|-----------------------------------------------|--------------------------------------|----------------------------------|
