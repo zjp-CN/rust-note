@@ -1,7 +1,7 @@
 # Rust 学习笔记
 
 [<img alt="github" src="https://img.shields.io/github/license/zjp-CN/rust-note?color=blue" height="20">](https://github.com/zjp-CN/rust-note)
-[![github pages](https://github.com/zjp-CN/rust-note/actions/workflows/gh-pages.yml/badge.svg)](https://github.com/zjp-CN/rust-note/actions/workflows/gh-pages.yml)
+[![Pages deploy](https://github.com/zjp-CN/rust-note/actions/workflows/pages.yml/badge.svg)](https://github.com/zjp-CN/rust-note/actions/workflows/pages.yml)
 
 [这里](https://github.com/zjp-CN/rust-note)主要是笔记文章。
 
