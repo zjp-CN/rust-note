@@ -18,3 +18,4 @@
     - [常量泛型参数的分类实现](./forum/impl-const-param.md)
     - [如何理解生命周期与型变]()
     - [静态生命周期提升](./forum/static-promotion.md)
+    - [`+=` 运算符与 MIR 应用](./forum/addassgin.md)
