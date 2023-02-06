@@ -576,7 +576,8 @@ bb6: {
 * 观察两个 MIR 片段的 `move _13`，第二个片段的 `&mut _1` 借用已经在获取索引时结束（未能到达 `add_assign`），而第一个在调用 `add_assign` 时结束
 * 所以 `Vec<MyNum>` 上的 `b[0] += b[1]` 是通过两个不同的 `&mut Vec<MyNum>` 和 `&Vec<MyNum>`，分别得到 `&mut MyNum` 和 `MyNum` 两个操作数
 
-而 Rust 的借用检查不允许在一个函数调用中对同一个值同时使用 `&mut` 和 `&`，从而编译报错。
+而 `_10 = <MyNum as AddAssign>::add_assign(move _11, move _14)` 延长了 `_11` 的生命周期（从而延长 `_12`、`_13`、最终 `&mut _1` 的生命周期），导致与
+`&_1` 生命周期交叉。
 
 ```rust,ignore
 // b[0] += b[1] on &mut [MyNum]
@@ -592,7 +593,7 @@ _12 = <MyNum as AddAssign>::add_assign(move _13, move _17) // activated 阶段
 
 _13 = &mut _1; // _1: Vec<MyNum>
 _12 = <Vec<MyNum> as IndexMut<usize>>::index_mut(move _13, const 0_usize) // _13: &mut Vec<MyNum>, _12: &mut MyNum
-_11 = &mut (*_12); // reborrow
+_11 = &mut (*_12); // reborrow, _11: &mut MyNum
 
 _16 = &_1;
 _15 = <Vec<MyNum> as Index<usize>>::index(move _16, const 1_usize) // _16: &Vec<MyNum>, _15: &mut MyNum
