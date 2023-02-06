@@ -386,7 +386,7 @@ fn main() {
         * 调用 receiver 为 `&mut self` 的方法（包括方法调用时的自动引用）：如 `vec.push(vec.len())`
         * 函数参数中的 `&mut T` reborrow：如 `std::mem::replace(r, vec![r.len()])`
         * 重载的复合赋值运算符中隐式的 `&mut T`：如本小节示例
-    * 代码中，任何显式的 `&mut` 和 `ref mut` 都不是两阶段借用
+    * 源代码中，任何显式的 `&mut` 和 `ref mut` 都不是两阶段借用
 
 [Reference-reborrow]: https://github.com/rust-lang/reference/issues/788
 [RFC-reborrow]: https://github.com/rust-lang/rfcs/pull/2364#issuecomment-375444971
