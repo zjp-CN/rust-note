@@ -364,14 +364,14 @@ Rust 可以从多种维度分类和抽象函数：
     * 捕获：[Closure]
 2. 使用 trait 抽象“以何种方式捕获/或者如何处理捕获的环境变量”（注意，这与函数参数的所有权、可变性无关）：
     * [`FnOnce`]：获取捕获变量的所有权
-    * [`FnMut`]：修改捕获变量的值；且 `FnMut` 是 `FnOnce` 的子类型
-    * [`Fn`]：获取捕获变量的引用；且 `Fn` 是 `FnMut` 的子类型
+    * [`FnMut`]：修改捕获变量的值；且 `FnMut: FnOnce`
+    * [`Fn`]：获取捕获变量的引用；且 `Fn: FnMut`
 
 它们的具体说明参考各自的文档，这里只总结一下基本知识：
 * [Function Item]：只适用于函数条目，可以赋给变量，但无法写出其类型；可以转化成函数指针，而且实现了 `FnOnce`、`FnMut`、`Fn` 以及其他 traits，零大小
-* [Function Pointer]：函数指针，是 primitive type，通常从函数条目或非捕获闭包使用 `as` 转化过来，对最多 12 个参数的情况实现了 
+* [Function Pointer]：函数指针，是 primitive type，可以写出类型，通常从函数条目或非捕获闭包使用 `as` 转化过来，对最多 12 个参数的情况实现了 
   `FnOnce`、`FnMut`、`Fn` 以及其他 traits，具有 `usize` 大小
-* [Closure]：闭包，按照一些规则实现 `FnOnce`、`FnMut`、`Fn` 及其他 traits 中的部分或全部，可以赋给变量，但无法写出其类型；由捕获变量的数量决定大小
+* [Closure]：闭包，按照一些规则实现 `FnOnce`、`FnMut`、`Fn` 及其他 traits 中的部分或全部，可以赋给变量，但无法写出其类型；由捕获变量的类型大小和数量决定闭包大小
 
 [Function Item]: https://doc.rust-lang.org/reference/types/function-item.html
 [Function Pointer]: https://doc.rust-lang.org/reference/types/function-pointer.html
