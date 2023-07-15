@@ -19,3 +19,5 @@
     - [如何理解生命周期与型变]()
     - [静态生命周期提升](./forum/static-promotion.md)
     - [`+=` 运算符与 MIR 应用](./forum/addassgin.md)
+- [赏析 PR/issue](./learn-from-pr-issue.md)
+    - [`LazyLock` 未稳定的难点](./learn-from-pr-issue/LazyLock.md)
