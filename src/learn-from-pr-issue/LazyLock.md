@@ -29,15 +29,12 @@
     * `lazy_static` 适合初始化一个全局的、线程安全的值，其初始化函数在编译时已知，很少将它放入自定义的数据结构
     * `once_cell` 提供的类型可以在任意地方构建初始化函数，即初始化函数可以在编译时甚至运行时已知，完全可以放入自定义数据结构
 
-
 一个好消息是，标准库正在参照 `once_cell` 库，将大部分功能实现。[`OnceCell`] 及其线程安全的 [`OnceLock`] 已在今年 6 月的 Rust [1.70] 的标准库中稳定。
 
 但其惰性版本 [`LazyCell`]、[`LazyLock`] 尚未稳定，原因有几点：
 
-
 * <https://github.com/rust-lang/rust/issues/109736>
 * <https://github.com/matklad/once_cell/issues/167>
-
 
 [`Sync`]: https://doc.rust-lang.org/std/marker/trait.Sync.html
 [`OnceCell`]: https://doc.rust-lang.org/std/cell/struct.OnceCell.html
@@ -45,47 +42,109 @@
 [`LazyCell`]: https://doc.rust-lang.org/std/cell/struct.LazyCell.html
 [`LazyLock`]: https://doc.rust-lang.org/std/sync/struct.LazyLock.html
 [1.70]: https://blog.rust-lang.org/2023/06/01/Rust-1.70.0.html#oncecell-and-oncelock
+
 [mut]: https://play.rust-lang.org/?version=stable&mode=debug&edition=2021&gist=b4a5948e58149068f583fb492079aefa
 
+## 默认参数可能与捕获式闭包冲突
 
-## 函数泛型参数在闭包上推断不佳
+[E0121]: https://doc.rust-lang.org/stable/error_codes/E0121.html
 
-```rust
-#![feature(lazy_cell)]
-use std::sync::LazyLock as Lazy;
+`LazyLock` 在这个问题上的相关设计为：
+* 携带一个函数指针默认参数：`struct LazyLock<T, F = fn() -> T> { ... }`，目的是让 `static LAZY: LazyLock<Type> = ...`
+  语法生效。这样做是因为 [`_` 无法出现在 static 中][E0121]，而函数指针作为默认参数可以很好地被编译器推断而无需指定它。
+  注意：[函数指针](https://doc.rust-lang.org/reference/types/function-pointer.html) 有两个来源，函数项和非捕获式闭包。
 
-fn main() {
-    let env = "hello".to_string();
+  ```rust
+  mod not_work {
+      // 无默认参数
+      struct Lazy<T, F>(T, F);
 
-    let ok1 = Lazy::new(|| env);
-    let ok2: Lazy<String, _> = Lazy::new(|| env);
+      static L1: Lazy<()> = Lazy((), || {});
+      static L2: Lazy<(), _> = Lazy((), || {});
+  }
+  mod work {
+      // 默认参数
+      struct Lazy<T, F = fn() -> T>(T, F);
+      static L: Lazy<()> = Lazy((), || {});
+  }
 
-    let err: Lazy<String> = Lazy::new(|| env);
-}
-```
+  fn main() {}
+  ```
 
-在 `err` 那行会出现：
+  ```rust
+  // L1 遇到的问题
+  error[E0107]: struct takes 2 generic arguments but 1 generic argument was supplied
+   --> src/main.rs:3:16
+    |
+  3 |     static L1: Lazy<()> = Lazy((), || {});
+    |                ^^^^ -- supplied 1 generic argument
 
-```rust
-error[E0308]: mismatched types
-  --> src/main.rs:10:39
-   |
-10 |     let err: Lazy<String> = Lazy::new(|| env);
-   |                             --------- ^^^^^^ expected fn pointer, found closure
-   |                             |
-   |                             arguments to this function are incorrect
-   |
-   = note: expected fn pointer `fn() -> String`
-                 found closure `[closure@src/main.rs:10:39: 10:41]`
+    |                |
+    |                expected 2 generic arguments
+    |
+  note: struct defined here, with 2 generic parameters: `T`, `F`
 
-note: closures can only be coerced to `fn` types if they do not capture any variables
-  --> src/main.rs:10:42
-   |
-10 |     let err: Lazy<String> = Lazy::new(|| env);
-   |                                          ^^^ `env` captured here
-note: associated function defined here
-  --> /rustc/7bd81ee1902c049691d0a1f03be5558bee51d100/library/std/src/sync/lazy_lock.rs:68:18
-```
+   --> src/main.rs:2:12
+    |
+  2 |     struct Lazy<T, F>(T, F);
+    |            ^^^^ -  -
+  help: add missing generic argument
+    |
+  3 |     static L1: Lazy<(), F> = Lazy((), || {});
+    |                       +++
+
+  // L2 遇到的问题
+  error[E0121]: the placeholder `_` is not allowed within types on item signatures for static variables
+   --> src/main.rs:2:11
+    |
+  2 | static L: Lazy<(), _> = Lazy((), || {});
+    |           ^^^^^^^^^^^ not allowed in type signatures
+  ```
+
+* 在实现上，参数 `F` 采用 trait bound，即 `impl<T, F: FnOnce() -> T> LazyLock<T, F>`，这实际上允许函数指针和 **捕获式** 闭包、
+  以及 `Box<dyn FnOnce>` 之类的类型作为 `F`。编译器可以推断闭包，但如果使用者以 `Lazy<Type>` 方式标注类型，会导致捕获式闭包与
+  默认参数发生类型冲突，因为它们无法转化。
+
+  ```rust
+  #![feature(lazy_cell)]
+  use std::sync::LazyLock as Lazy;
+
+  fn main() {
+      let env = "hello".to_string();
+
+      let ok1 = Lazy::new(|| env);
+      let ok2: Lazy<String, _> = Lazy::new(|| env);
+
+      let err: Lazy<String> = Lazy::new(|| env);
+
+  }
+  ```
+
+  在 `err` 那行会出现：
+
+
+  ```rust
+  error[E0308]: mismatched types
+    --> src/main.rs:10:39
+
+     |
+  10 |     let err: Lazy<String> = Lazy::new(|| env);
+     |                             --------- ^^^^^^ expected fn pointer, found closure
+     |                             |
+
+     |                             arguments to this function are incorrect
+     |
+     = note: expected fn pointer `fn() -> String`
+                   found closure `[closure@src/main.rs:10:39: 10:41]`
+
+  note: closures can only be coerced to `fn` types if they do not capture any variables
+    --> src/main.rs:10:42
+     |
+  10 |     let err: Lazy<String> = Lazy::new(|| env);
+     |                                          ^^^ `env` captured here
+  note: associated function defined here
+    --> /rustc/7bd81ee1902c049691d0a1f03be5558bee51d100/library/std/src/sync/lazy_lock.rs:68:18
+  ```
 
 ## 需要处理协变
 
@@ -95,7 +154,6 @@ note: associated function defined here
 
 ```rust
 use once_cell::sync::Lazy as LazyLock;
-
 
 type Lazy<'a, T> = LazyLock<T, Box<dyn FnOnce() -> T + 'a>>;
 fn main() {
@@ -115,24 +173,25 @@ fn h<'a>(_: &'a str, _: &'a str) {}
 这不会编译：
 
 ```rust
-
 error[E0716]: temporary value dropped while borrowed
   --> src/main.rs:11:16
-   |
-11 |         g(&l, &String::new());
-   |                ^^^^^^^^^^^^^ - temporary value is freed at the end of this statement
 
+   |
+
+11 |         g(&l, &String::new());
+
+   |                ^^^^^^^^^^^^^ - temporary value is freed at the end of this statement
    |                |
    |                creates a temporary value which is freed while still in use
 ...
 14 | }
+
    | - borrow might be used here, when `l` is dropped and runs the `Drop` code for type `LazyLock`
    |
    = note: consider using a `let` binding to create a longer lived value
 ```
 
 为了看到麻烦所在，我特意标注了不变和协变两种情况：
-
 * 对于函数 h，两个引用的生命周期都是协变的，所以一个更长的引用 `&s` 通过协变缩短成与临时引用 `&String::new()`
   一样的生命周期，这可以编译，而且工作地很好
 * 但对于函数 g，`Lazy<'a, usize>` 是一个复合结构，`'a` 因为其背后的 `UnsafeCell` 而不变 (invariant)，
@@ -158,3 +217,9 @@ fn g<'a>(_lazy: &Lazy<'a, usize>, _: &'a str) {}
 解决这个问题的关键在于，`Lazy` 需要以协变的方式处理这个生命周期，而不是以不变的方式处理，这样就可以和
 `h(&s, &String::new())` 一样编译了。
 
+@danielhenrymantilla 在 [PR#230] 和 [PR#233] 中使用 `ManuallyDrop` 和 union 技巧处理了协变问题，但导致 dropck
+问题，目前需要不稳定 `#[may_dangle]` 方式解决（或者更高深的适用于 stable Rust 的技巧），最终通过 [PR#236] 取消了实验性的提交。
+
+[PR#230]: https://github.com/matklad/once_cell/pull/230
+[PR#233]: https://github.com/matklad/once_cell/pull/233
+[PR#236]: https://github.com/matklad/once_cell/pull/236
