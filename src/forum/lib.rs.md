@@ -76,4 +76,5 @@ pub struct NeverDeserializer<E> {
 * markdown 渲染问题：修复 ``[`crate::ident`]`` 、自动检测
 * 添加改进的关键字：猜测类别
 * 处理同一依赖的多版本问题（使用了 package 别名）
+* 更频繁更新信息：从原来的 1 小时更新频率改为 15 分钟
 * 更新 [免责声明](https://lib.rs/data-processing)
