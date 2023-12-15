@@ -13,6 +13,7 @@
     - [“变长参数”函数与回调](./dcl/variadic.md)
 - [non-lexical lifetimes (NLL)]()
 - [Subtyping and Variance](./subtyping.md)
+    - [当 `&'a Ty<'a>` 变成永远借用](./variance/covariance-borrow-forever.md)
 - [官方论坛帖子整理](./forum.md)
     - [从同质 variants 取同类型数据](./forum/homo-variant.md)
     - [常量泛型参数的分类实现](./forum/impl-const-param.md)
