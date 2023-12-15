@@ -372,7 +372,7 @@ fn g<'a, 'b>(_: MyData<'b>, _: &'b MyData<'a>) -> MyData<'b> { ... }
 
 这就是原帖中，yuyidegit 给的 [`impl<'a, 'b> Add<&'b MyData<'a>> for MyData<'b>`][yuyidegit] 能够通过编译的原因。
 
-[yuyidegit]: https://play.rust-lang.org/?version=stable&mode=debug&edition=2021&gist=56a6eba5928d4d7e2fe6bd163c7dca04
+[yuyidegit]: https://play.rust-lang.org/?version=stable&mode=debug&edition=2021&gist=04d52ee1137e1e3256b318172d239862
 
 </details>
 
