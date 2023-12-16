@@ -30,7 +30,7 @@ fn works(mut person: Person<'_>) {
 }
 ```
 
-我会简单略过这段代码不通过/通过的原因，如果你熟悉它们，则可以跳过以下两个小结（也无需关注上面的代码），而是从
+我会简单略过这段代码不通过/通过的原因，如果你熟悉它们，则可以跳过以下两个小节（也无需关注上面的代码），而是从
 [当 &'a Ty<'a> 牵绊你的时候](#当-a-tya-牵绊你的时候) 开始进入本文的正题。
 
 # `&'a mut Ty<'a>` 是一种反模式
@@ -188,14 +188,14 @@ impl Drop for Inner<'_> { fn drop(&mut self) {} }
 有时，你的代码没有出现显式的 `&'a Ty<'a>`，但依然有可能因为生命周期标注，让你隐式得到它。
 
 正如前述所言，`&'a Ty<'a>` 在 `Ty<'a>` 对 `'a` 协变时，通常不会造成影响；但若对 `'a` 不变，
-`&'a Ty<'a>` 与 `&'a mut Ty<'a>` 几乎造成同样的困难（唯一区别在于，一个是永久共享借用，另一个是永久独占借用）。
+`&'a Ty<'a>` 与 `&'a mut Ty<'a>` 几乎会造成同样的麻烦（唯一区别在于，一个是永久共享借用，另一个是永久独占借用）。
 
 永久借用意味着
-* `Ty<'a>` 与这个永久借用生死与共：要么一起存活，要么一起死亡
-* `Ty<'a>` 这个值一直被借用：所有权无法被获得和转移
+* `Ty<'a>` 与这个永久借用生死与共：`Ty<'a>` 和`&'a {mut} Ty<'a>` 要么一起存活，要么一起死亡
+* `Ty<'a>` 这个值一直被借用：`Ty<'a>` 的所有权无法被获得和转移
 
 在下述例子中，代码没有显式的 `&'a Ty<'a>` 或 `&'a mut Ty<'a>` （严格来说，其实存在 `&'a mut Ty<'a>`，因为
-`&'a mut dyn std::fmt::Debug` 其实是 `&'a mut dyn ('a + std::fmt::Debug)` 的语法糖，但在这不是重点）。
+`&'a mut dyn std::fmt::Debug` 是 `&'a mut dyn ('a + std::fmt::Debug)` 的语法糖，但在这不是重点）。
 
 ```rust,editable
 use std::cell::RefCell;
@@ -224,7 +224,7 @@ fn g<'a, 'b>(_: MyData<'a>, _: &'b MyData<'a>) -> MyData<'b> {
 }
 ```
 
-但实际上是存在一个隐式的 `&'a Ty<'a>`，且 `Ty<'a>` 对 `'a` 不变，从而遇到与
+但实际上里面存在一个隐式的 `&'a Ty<'a>`，且 `Ty<'a>` 对 `'a` 不变，从而遇到了与
 [“当 &'a Ty<'a> 牵绊你的时候”](#当-a-tya-牵绊你的时候) 相同麻烦。
 
 我自己推导生命周期会遵循一个套路，而第一步就是脱糖。f 和 g 两个函数的脱糖形式我已经写出来了，但它们的原型
@@ -234,9 +234,9 @@ fn g<'a, 'b>(_: MyData<'a>, _: &'b MyData<'a>) -> MyData<'b> {
 
 核心要点是每个方法调用变成最纯粹的形式，生命周期关系写得越清楚越好。我不会在这里描述具体怎么脱糖，这不是重点。
 
-方法脱糖成函数也仅仅是个开始，接下来需要精简核心问题的代码。上面的代码已经是最能复现问题的精简版，具体过程也不是重点，无需赘述。
+方法脱糖成函数也仅仅是个开始，接下来需要精简核心问题的代码。上面的代码已经是最能复现问题的精简版，具体过程也不是重点。
 
-然后，一个核心步骤是，机械地写下源代码里每处相关的生命周期和类型，这基于你对生命周期有多了解。
+然后，一个核心步骤是，机械地写下源代码里每处相关的生命周期和类型，这基于你对生命周期的了解程度。
 
 ```rust,editable
 use std::cell::RefCell;
@@ -246,7 +246,7 @@ fn main() {
 
     // ss => &'0 mut String => &'1 mut String (协变, '1 来自 &'1 mut ss)
     // &'1 mut ss => &'1 mut &'1 mut String => &'1 mut dyn ('1 + Debug)
-    // x: MyData(RefCell<'&'1 mut dyn Debug>)
+    // x: MyData(RefCell<&'1 mut dyn Debug>)
     let mut x = MyData(RefCell::new(&mut ss)); // x: MyData<'1> (不变, '1 无法缩短)
 
     let y = f(&x, &x); // f(&'2 MyData<'1>, &'2 MyData<'1>) -> MyData<'2> ('2 来自 &'2 x)
@@ -294,7 +294,7 @@ error[E0505]: cannot move out of `x` because it is borrowed
 ```
 
 <details>
-  <summary>关于原帖，以及我猜来自原帖的读者会有的一些疑问</summary>
+  <summary>【点击展开】关于原帖，以及我猜来自原帖的读者会有的一些疑问</summary>
 
 对原型的标注 [在这](https://play.rust-lang.org/?version=stable&mode=debug&edition=2021&gist=ba2376e9eaef0e5b2dd7305d6b259e19)（我依然简化了一些非常无关问题的代码）。
 
@@ -356,18 +356,16 @@ error[E0597]: `x` does not live long enough
 是最需要注意的。重新回到出错的地方，我们会注意到有一个 `'3`，它在 `&'3 MyData<'1>` 中似乎有改进的空间
 
 ```rust,no_run
-    let y = f(&x, &x); // f(&'2 MyData<'1>, &'2 MyData<'1>) -> MyData<'2> ('2 来自 &'2 x)
-
-    g(y, &x); // g(MyData<'2>, &'3 MyData<'1>) -> MyData<'3> (注意：这直接将 y 的类型代入)
+let y = f(&x, &x); // f(&'2 MyData<'1>, &'2 MyData<'1>) -> MyData<'2> ('2 来自 &'2 x)
+g(y, &x); // g(MyData<'2>, &'3 MyData<'1>) -> MyData<'3> (注意：这直接将 y 的类型代入)
 ```
 
 当 `'3 = '2` 时，这两行的所有 `&x` 被变成了 `&'2 x`，这是合理的，因为共享借用可以共享同一个生命周期，从而有
 ([playground](https://play.rust-lang.org/?version=stable&mode=debug&edition=2021&gist=c381fa2d1e927e20b0b42868329c9ecf))
 
 ```rust,no_run
-    let y = f(&x, &x); // f(&'2 MyData<'1>, &'2 MyData<'1>) -> MyData<'2> ('2 来自 &'2 x)
-
-    g(y, &x); // g(MyData<'2>, &'2 MyData<'1>) -> MyData<'2> 
+let y = f(&x, &x); // f(&'2 MyData<'1>, &'2 MyData<'1>) -> MyData<'2> ('2 来自 &'2 x)
+g(y, &x); // g(MyData<'2>, &'2 MyData<'1>) -> MyData<'2> 成立
 
 // 相应的 g 的签名应改为
 fn g<'a, 'b>(_: MyData<'b>, _: &'b MyData<'a>) -> MyData<'b> { ... }
