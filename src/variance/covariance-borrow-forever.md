@@ -76,10 +76,10 @@ fn works(mut person: Person<'_>) {
 
 具体来说，如果 `Ty<'a>` 对 `'a` 不再是协变，而是不变 (invariant)，那么对于 `'a: 'b`
 * `&'a Ty<'a>` 依然可以缩短成 `&'b Ty<'a>` （但仅限在 `'a` 存活期间，见 [永久借用中的协变]）
-* 只是 `Ty<'a>` 无法缩短成 `Ty<'b>`，从而 `&'a Ty<'a>` 和 `&'b Ty<'a>` 无法缩短成 `&'b Ty<'b>`
+* `Ty<'a>` 无法缩短成 `Ty<'b>`，从而 `&'a Ty<'a>` 和 `&'b Ty<'a>` 无法缩短成 `&'b Ty<'b>`
 
 实际上，`&'a Ty<'a>` 和 `&'a mut Ty<'a>` 其实几乎一模一样
-([playground for `&'a mut Ty<'a'>`](https://play.rust-lang.org/?version=stable&mode=debug&edition=2021&gist=3b2db91b62a3cadd03c4b4d390b5bf03))
+([playground for `&'a mut Ty<'a>`](https://play.rust-lang.org/?version=stable&mode=debug&edition=2021&gist=3b2db91b62a3cadd03c4b4d390b5bf03))
 ，唯一的区别在于一个是永久共享借用，另一个是永久独占借用。
 
 ```rust,editable
@@ -118,7 +118,7 @@ impl<'a> Invariant<'a> {
 都可以因为协变相应地缩短成 `&'b` 或 `&'b mut`。
 
 生命周期是协变的（即生命周期可以缩短），而引用通常可以再借 
-(reborrow)，这导致一个长的生命周期可以在它存活的状态中被“分割”彼此成互不相交的子生命周期。
+(reborrow)，这表明：一个长的生命周期，可以在它存活的状态中，被“分割”彼此成互不相交的子生命周期。
 
 这也适用于永久借用。以下两个代码展示了如何在永久借用的存活期间再借（重点在 `borrow` 内部）。
 
