@@ -39,7 +39,8 @@ fn works(mut person: Person<'_>) {
 
 每当看到类似这种标注，都应该警惕这基本上是一个死胡同。因为一旦你获得 `&'a mut Ty<'a>`，那么面临两种选择
 1. 一直使用它，但它是 `Ty<'a>` 的全周期独占引用， `Ty<'a>` 活多长，这个独占引用就维持多长，借用规则让你永远不允许 
-   reborrow (`&'another mut Ty<'a>`)，也永远不允许有共享引用 (`&'another Ty<'a>`)。
+   存在另一个独占引用 (`&'another mut Ty<'a>`)，也永远不允许有其他共享引用 (`&'another Ty<'a>`)。  
+  （但允许 reborrows (`&'sub mut Ty<'a>`)，因为 `&'a mut` 中，`&mut` 对 `'a` 协变，见下面的 [永久借用中的协变]）
 2. 不再使用它，那么 `&'a mut Ty<'a>` 的 `'a` 不再存活，也就是 `Ty<'a>` 不再存活，即无法再使用 `Ty<'a>`。
 
 所以，`&'a mut Ty<'a>` 这个独占引用变成对 `Ty<'a>` 的永久独占访问，似乎 `Ty<'a>` 的所有权也随着这个独占引用被夺走了：
@@ -74,12 +75,12 @@ fn works(mut person: Person<'_>) {
 可以通过破坏 `&'a Ty<'a>` 进行协变的前提，来让 `&'a Ty<'a>` 绊倒你。
 
 具体来说，如果 `Ty<'a>` 对 `'a` 不再是协变，而是不变 (invariant)，那么对于 `'a: 'b`
-* `&'a Ty<'a>` 依然可以缩短成 `&'b Ty<'a>`
+* `&'a Ty<'a>` 依然可以缩短成 `&'b Ty<'a>` （但仅限在 `'a` 存活期间，见 [永久借用中的协变]）
 * 只是 `Ty<'a>` 无法缩短成 `Ty<'b>`，从而 `&'a Ty<'a>` 和 `&'b Ty<'a>` 无法缩短成 `&'b Ty<'b>`
 
-很多情况下，这不会造成什么问题，因为你依然可以缩短生命周期得到临时的 `&'b Ty<'a>`，避免了永久借用。
-
-但随着代码变得复杂，你可能在不知不觉中重蹈 `&'a mut Ty<'a>` 的覆辙。考虑以下代码：
+实际上，`&'a Ty<'a>` 和 `&'a mut Ty<'a>` 其实几乎一模一样
+([playground for `&'a mut Ty<'a'>`](https://play.rust-lang.org/?version=stable&mode=debug&edition=2021&gist=3b2db91b62a3cadd03c4b4d390b5bf03))
+，唯一的区别在于一个是永久共享借用，另一个是永久独占借用。
 
 ```rust,editable
 fn main() {
@@ -91,7 +92,7 @@ fn main() {
 
     // 但你不能做以下事情中的任何一件
     
-    // 但不能有 &'a mut T 和 &'a T 同时存在
+    // 不能有 &'a mut T：因为 &'a mut T 和 &'a T 不能同时存在
     &mut invariant; // error: cannot borrow `invariant` as mutable because it is also borrowed as immutable
 
     // 没法 move：因为 move 一个变量的前提是这个变量不被借用
@@ -105,6 +106,77 @@ fn main() {
 struct Invariant<'a>(*mut &'a ()); // `*mut T` 中，`*mut` 对 T 不变
 impl<'a> Invariant<'a> {
     fn borrow(&'a self) {}
+    fn consume(self) {}
+}
+```
+
+[永久借用中的协变]: #永久借用中的协变
+
+# 永久借用中的协变
+
+引用的生命周期是协变的：对于 `'a: 'b`，任何 `&'a` 或 `&'a mut`
+都可以因为协变相应地缩短成 `&'b` 或 `&'b mut`。
+
+生命周期是协变的（即生命周期可以缩短），而引用通常可以再借 
+(reborrow)，这导致一个长的生命周期可以在它存活的状态中被“分割”彼此成互不相交的子生命周期。
+
+这也适用于永久借用。以下两个代码展示了如何在永久借用的存活期间再借（重点在 `borrow` 内部）。
+
+```rust
+fn main() {
+    let val = ();
+    let mut ref_val = &val;
+    let mut invariant = Invariant(&mut ref_val);
+    invariant.borrow(); // Invariant<'a>::borrow(&'a mut Self)
+    
+    // error: cannot borrow `invariant` as mutable more than once at a time
+    // 因为形成新的 &'another mut Ty<'a>，需要结束任何其他引用，而 &'a mut Ty<'a> 与 Ty<'a> 同生共死
+    // invariant.temp_borrow(); 
+}
+
+struct Invariant<'a>(*mut &'a ()); // `*mut T` 中，`*mut` 对 T 不变
+impl<'a> Invariant<'a> {
+    fn borrow(&'a mut self) { // ok
+        // 永久借用期间，进行多次 reborrows：&'temp (*(&'a mut self))
+        // 长的生命周期被“分割”彼此成互不相交的子生命周期
+        self.temp_borrow();
+        self.temp_borrow();
+        self.temp_borrow();
+    }
+    fn temp_borrow(&mut self) {}
+    fn consume(self) {}
+}
+```
+
+```rust
+fn main() {
+    let val = ();
+    let mut ref_val = &val;
+    let mut invariant = Invariant(&mut ref_val);
+    invariant.borrow(); // Invariant<'a>::borrow(&'a Self)
+    
+    invariant.temp_borrow(); // ok: 共享借用可以共享同一个生命周期
+    
+    // error: cannot borrow `invariant` as mutable because it is also borrowed as immutable
+    // 因为形成新的 &'another mut Ty<'a>，需要结束任何其他引用，而 &'a Ty<'a> 与 Ty<'a> 同生共死
+    // invariant.temp_mut_borrow(); 
+}
+
+struct Invariant<'a>(*mut &'a ()); // `*mut T` 中，`*mut` 对 T 不变
+impl<'a> Invariant<'a> {
+    fn borrow(&'a self) { // ok
+        // 思路一：
+        // 永久借用期间，进行多次 reborrows：&'temp (*(&'a self))
+        // 长的生命周期被“分割”彼此成互不相交的子生命周期 &'temp1、&'temp2、&'temp3
+        
+        // 思路二：共享借用可以共享同一个生命周期，以下都是 &'a self
+        
+        self.temp_borrow();
+        self.temp_borrow();
+        self.temp_borrow();
+    }
+    fn temp_borrow(&self) {}
+    fn temp_mut_borrow(&mut self) {}
     fn consume(self) {}
 }
 ```
