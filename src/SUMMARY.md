@@ -11,6 +11,7 @@
     - [FAQ](./proc/FAQ.md)
 - [声明宏案例](./dcl.md)
     - [“变长参数”函数与回调](./dcl/variadic.md)
+    - [destructuring_drop!](./dcl/destructuring_drop.md)
 - [non-lexical lifetimes (NLL)]()
 - [Subtyping and Variance](./subtyping.md)
     - [当 `&'a Ty<'a>` 变成永远借用](./variance/covariance-borrow-forever.md)
