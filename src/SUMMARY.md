@@ -22,6 +22,7 @@
     - [静态生命周期提升](./forum/static-promotion.md)
     - [`+=` 运算符与 MIR 应用](./forum/addassgin.md)
     - [lib.rs 网站新功能一览](./forum/lib.rs.md)
+    - [共享可变的错误/UB 做法](./forum/shared-mutablity-UB.md)
 - [赏析 PR/issue](./learn-from-pr-issue.md)
     - [`LazyLock` 未稳定的难点](./learn-from-pr-issue/LazyLock.md)
 - [阅读清单](./reading-list/index.md)
