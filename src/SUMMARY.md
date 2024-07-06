@@ -24,3 +24,5 @@
     - [lib.rs 网站新功能一览](./forum/lib.rs.md)
 - [赏析 PR/issue](./learn-from-pr-issue.md)
     - [`LazyLock` 未稳定的难点](./learn-from-pr-issue/LazyLock.md)
+- [阅读清单](./reading-list/index.md)
+    - [2024 清单 a](./reading-list/2024a.md)
