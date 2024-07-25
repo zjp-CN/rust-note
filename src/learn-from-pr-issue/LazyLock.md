@@ -1,4 +1,9 @@
-# `LazyLock` 未稳定的难点
+# `LazyLock` 稳定的难点
+
+> 2024-07-25 更新： LazyCell 和 LazyLock 已经在 1.80 标准库中[稳定]（其中 LazyCell 被定义于 core），尽管最终这里提到的两个问题
+> [尚未解决](https://github.com/rust-lang/rust/pull/121377#issuecomment-1979481268)。
+
+[稳定]: https://blog.rust-lang.org/2024/07/25/Rust-1.80.0.html#lazycell-and-lazylock
 
 ## `LazyLock` 的背景
 
@@ -31,7 +36,7 @@
 
 一个好消息是，标准库正在参照 `once_cell` 库，将大部分功能实现。[`OnceCell`] 及其线程安全的 [`OnceLock`] 已在今年 6 月的 Rust [1.70] 的标准库中稳定。
 
-但其惰性版本 [`LazyCell`]、[`LazyLock`] 尚未稳定，原因有几点：
+但其惰性版本 [`LazyCell`]、[`LazyLock`] 稳定具有一些障碍：
 
 * <https://github.com/rust-lang/rust/issues/109736>
 * <https://github.com/matklad/once_cell/issues/167>
