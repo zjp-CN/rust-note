@@ -9,4 +9,4 @@
 1. 我的[翻译](https://zjp-cn.github.io/translations)
 2. 学习 Rust 以来搜集的[资料](https://www.yuque.com/zhoujiping/programming/rust-materials)
 3. [neovim0.6-blogs](https://zjp-cn.github.io/neovim0.6-blogs)
-
+4. [开源操作系统训练营笔记](https://zjp-cn.github.io/os-notes/)
