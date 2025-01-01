@@ -5,15 +5,15 @@ multilingual = false
 src = "src"
 title = "rust-note"
 
-# [preprocessor.theme]
-# pagetoc = true
-# sidebar-width = "300px"
-# pagetoc-width = "15%"
-# content-max-width = "75%"
-# content-main-margin-left  = "4%"
-# content-main-margin-right = "4%"
-# nav-chapters-max-width    = "3%"
-# nav-chapters-min-width    = "3%"
+[preprocessor.theme]
+pagetoc = true
+sidebar-width = "320px"
+pagetoc-width = "15%"
+content-max-width = "75%"
+content-main-margin-left  = "4%"
+content-main-margin-right = "4%"
+nav-chapters-max-width    = "3%"
+nav-chapters-min-width    = "3%"
 
 [output.html]
 default-theme = "ayu"
