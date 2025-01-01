@@ -14,7 +14,7 @@ jobs:
       contents: write  # To push a branch 
       pull-requests: write  # To create a PR from that branch
     env:
-      MDBOOK_VERSION: '0.4.40'
+      MDBOOK_VERSION: '0.4.43'
       # MDBOOK_MERMAID_VERSION: '0.13.0'
     steps:
     - uses: actions/checkout@v4
