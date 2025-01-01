@@ -99,7 +99,7 @@ h6:target::before {
     padding: 0 10px;
 }
 .content main {
-    margin-inline-start: auto;
+    margin-inline-start: 40px;
     margin-inline-end: auto;
     max-width: var(--content-max-width);
 }
