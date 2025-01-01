@@ -26,4 +26,5 @@
 - [赏析 PR/issue](./learn-from-pr-issue.md)
     - [`LazyLock` 稳定的难点](./learn-from-pr-issue/LazyLock.md)
 - [阅读清单](./reading-list/index.md)
-    - [2024 清单 a](./reading-list/2024a.md)
+    - [2024 清单 A](./reading-list/2024a.md)
+    - [2025 清单 A](./reading-list/2025a.md)
