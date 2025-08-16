@@ -99,12 +99,12 @@ Rust 语言是一个庞大的项目，其组织结构记录在 [team] 仓库中�
 
 我很少参与 Rust 语言项目，大部分时候只是作为长期的观察者。根据我的观察，Rust 项目的运作需要两方面的人员投入：全职人员和社区人员。
 
-来自企业的全职从事 Rust 编译器开发的人员（以 AWS、FutureWei 为典型，因为它聚集了一部分相当重要的 Rust 核心人物）。
-他们具有最丰富的 Rust 开发和设计经验。但几年来逐渐这些人员淡出了 Rust 语言项目，甚至最近一些核心开发人员，比如主要开发异步新功能的
-compiler-errors、专攻编译器优化的 nnethercote）正在寻找下一份全职 Rust 编译器工作，折射出些许危机。当这些中流砥柱力量减弱，则需要
+来自企业的全职从事 Rust 编译器开发的人员（以 AWS、FutureWei 为典型，聚集了一部分相当重要的 Rust 核心人物）。
+他们具有最丰富的 Rust 开发和设计经验。但这几年来这些人员逐渐淡出了 Rust 语言项目，甚至最近一些顶级开发人员，比如开发异步新功能的
+compiler-errors、专攻编译器优化的 nnethercote，正在寻找下一份全职 Rust 编译器工作，折射出些许危机。当这些中流砥柱力量减弱，则需要
 漫长的时间才能弥补回来。
 
-预防将来青黄不接的最好良剂只有培养更多的 Rust 编译器开发者，而第一步只能从积极贡献开始。美国和欧洲开发者对 Rust 语言的参与程度可能占据
+预防将来青黄不接的最好良剂只有培养更多的 Rust 编译器开发者，而第一步只能从积极贡献开始。北美和欧洲开发者对 Rust 语言的参与程度可能占据
 80%。（不要引用这个数据，这只是我的一种感受，我没有进行统计）。中国开发者在其中占据一些力量，但比较微弱。语言交流是一个很大的阻碍，
 但主要的因素是由兴趣驱动。
 
@@ -147,7 +147,7 @@ os-checker 的主要开发时间有 4 个月，从后端检查逻辑到 [前端]
 OS 组件库提交一些修复。在这个过程中，我认识了秦博士和徐老师。
 
 由此一年多的时间都在 Rust 检查代码这件事情上忙碌：除了 os-checker，我还为 verify-rust-std 编写了 [distributed-verification]，为
-tag-std 编写了 [safety-tool] 并向 Rust 社区提交 [safety tags] RFC。
+tag-std 编写了 [safety-tool] 并向 Rust 社区提交 [safety tags] RFC。这些都在我的 [周报] 中记录了。
 
 [os-camp]: https://opencamp.cn/os2edu
 [os-notes]: https://zjp-cn.github.io/os-notes/embassy-integrated-timers.html
@@ -157,6 +157,7 @@ tag-std 编写了 [safety-tool] 并向 Rust 社区提交 [safety tags] RFC。
 [distributed-verification]: https://github.com/os-checker/distributed-verification
 [safety-tool]: https://github.com/Artisan-Lab/tag-std/blob/main/safety-tool
 [safety tags]: https://github.com/rust-lang/rfcs/pull/3842
+[周报]: https://os-checker.github.io/book/devlogs.html
 
 ---
 
