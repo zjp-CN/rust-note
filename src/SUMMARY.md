@@ -29,3 +29,4 @@
     - [2024 清单 A](./reading-list/2024a.md)
     - [2025 清单 A](./reading-list/2025a.md)
       - [Sans-IO](./async/Sans-IO.md)
+- [我与 Rust 语言的 5 年](./ten-years-of-rust.md)
