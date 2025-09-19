@@ -44,10 +44,10 @@
 </summary>
 
 <div class="pic">
-  <img src="./../../img/RustChinaConf2025/gongyan-a.jpg" >
-  <img src="./../../img/RustChinaConf2025/gongyan-b.jpg" >
-  <img src="./../../img/RustChinaConf2025/gongyan-c.jpg" >
-  <img src="./../../img/RustChinaConf2025/gongyan-d.jpg" >
+  <img src="./RustChinaConf2025/gongyan-a.jpg" >
+  <img src="./RustChinaConf2025/gongyan-b.jpg" >
+  <img src="./RustChinaConf2025/gongyan-c.jpg" >
+  <img src="./RustChinaConf2025/gongyan-d.jpg" >
 </div>
 
 </details>
@@ -59,8 +59,8 @@
 这也是为数不多的中外演讲者同框的照片。
 
 <div class="pic">
-  <img src="./../../img/RustChinaConf2025/gongyan1.jpg" >
-  <img src="./../../img/RustChinaConf2025/gongyan2.jpg" >
+  <img src="./RustChinaConf2025/gongyan1.jpg" >
+  <img src="./RustChinaConf2025/gongyan2.jpg" >
 </div>
 
 期间也有一些小插曲，比如出发时间几番提前、临近集合才告知晚宴地点等等。
@@ -76,8 +76,8 @@
 </summary>
 
 <div class="pic">
-  <img src="./../../img/RustChinaConf2025/GOSIM1.jpg" >
-  <img src="./../../img/RustChinaConf2025/GOSIM2.jpg" >
+  <img src="./RustChinaConf2025/GOSIM1.jpg" >
+  <img src="./RustChinaConf2025/GOSIM2.jpg" >
 </div>
 
 </details>
@@ -87,9 +87,9 @@
 闭门会议是冯老师主持的，与 Rust 基金会人员面对面交流，涉及 Rust 项目、行业、教育等话题。
 
 <div class="pic">
-  <div class="pic-ele"><img src="./../../img/RustChinaConf2025/Rebecca.jpeg" > <div>Rebecca 开幕演讲</div></div>
-  <div class="pic-ele"><img src="./../../img/RustChinaConf2025/RustFoundationUnconf1.jpg" > <div>与 Rust 基金会的闭门会议 1</div></div>
-  <div class="pic-ele"><img src="./../../img/RustChinaConf2025/RustFoundationUnconf2.jpg" > <div>与 Rust 基金会的闭门会议 2 </div></div>
+  <div class="pic-ele"><img src="./RustChinaConf2025/Rebecca.jpeg" > <div>Rebecca 开幕演讲</div></div>
+  <div class="pic-ele"><img src="./RustChinaConf2025/RustFoundationUnconf1.jpg" > <div>与 Rust 基金会的闭门会议 1</div></div>
+  <div class="pic-ele"><img src="./RustChinaConf2025/RustFoundationUnconf2.jpg" > <div>与 Rust 基金会的闭门会议 2 </div></div>
 </div>
 
 这里的插曲是，我被张老师提前 1 天告知要参加这个，他和徐老师都希望我谈谈我的工作。于是我准备了一点 
@@ -116,9 +116,9 @@ Rebecca 会在说话的时候，眼神落在每个人身上，即便他们除了
     Rebecca 站在基金会的角度表达了一些很好的观点（尤其情况在资金允许的情况下聘用人员），然后台上其他嘉宾也分享了自己的看法。
 
 <div class="pic">
-  <div class="pic-ele"><img src="./../../img/RustChinaConf2025/asterinas.jpeg" > <div>田洪亮博士演讲 Asterinas</div></div>
-  <div class="pic-ele"><img src="./../../img/RustChinaConf2025/bart.jpeg" > <div>Bart Massey 副教授演讲 Rust 嵌入式</div></div>
-  <div class="pic-ele"><img src="./../../img/RustChinaConf2025/RustChinaConf-9.13-afternoon-roundtable.jpg" > <div> Rust Global 圆桌讨论 - 基金会与国际讲师交流</div></div>
+  <div class="pic-ele"><img src="./RustChinaConf2025/asterinas.jpeg" > <div>田洪亮博士演讲 Asterinas</div></div>
+  <div class="pic-ele"><img src="./RustChinaConf2025/bart.jpeg" > <div>Bart Massey 副教授演讲 Rust 嵌入式</div></div>
+  <div class="pic-ele"><img src="./RustChinaConf2025/RustChinaConf-9.13-afternoon-roundtable.jpg" > <div> Rust Global 圆桌讨论 - 基金会与国际讲师交流</div></div>
 </div>
 
 ## 9.13 - 夜游
@@ -140,11 +140,11 @@ GOSIM 组织了所有讲师在钱塘江上进行游轮夜游。但可惜出门�
 上午观看了所有主题演讲，中午结束的时候大家拍了大合照。但有些遗憾没有和陈老师他们一起合影。
 
 <div class="pic">
-  <div class="pic-ele"><img src="./../../img/RustChinaConf2025/RustChinaConf-9.14-chen.jpg" > <div>陈渝老师、尤予阳、郑友捷</div></div>
+  <div class="pic-ele"><img src="./RustChinaConf2025/RustChinaConf-9.14-chen.jpg" > <div>陈渝老师、尤予阳、郑友捷</div></div>
   <div class="pic-ele"><img src="https://github.com/user-attachments/assets/e1a82770-cd15-428e-8aba-88f7cf0710ae" > <div>第二日主题演讲列表</div></div>
-  <div class="pic-ele"><img src="./../../img/RustChinaConf2025/RustChinaConf-all2.jpg" > <div> 第二日会场大合照</div></div>
-  <div class="pic-ele"><img src="./../../img/RustChinaConf2025/RustChinaConf-all.jpg" > <div> 第一日会场大合照</div></div>
-  <div class="pic-ele"><img src="./../../img/RustChinaConf2025/RustChinaConf-9.14-party.jpg" > <div>Rust 10 周年庆祝</div></div>
+  <div class="pic-ele"><img src="./RustChinaConf2025/RustChinaConf-all2.jpg" > <div> 第二日会场大合照</div></div>
+  <div class="pic-ele"><img src="./RustChinaConf2025/RustChinaConf-all.jpg" > <div> 第一日会场大合照</div></div>
+  <div class="pic-ele"><img src="./RustChinaConf2025/RustChinaConf-9.14-party.jpg" > <div>Rust 10 周年庆祝</div></div>
 </div>
 
 ## 9.14 - 下午 - 主持和演讲
@@ -158,12 +158,12 @@ GOSIM 组织了所有讲师在钱塘江上进行游轮夜游。但可惜出门�
 我离开前，志愿者把一只 Ferris 吉祥物布偶送了给我，非常感谢大家的包容和关心！
 
 <div class="pic">
-  <div class="pic-ele"><img src="./../../img/RustChinaConf2025/RustChinaConf-me.jpg" > <div>分会场主持和演讲 os-checker</div></div>
-  <div class="pic-ele"><img src="./../../img/RustChinaConf2025/RustChinaConf-9.14-afternoon-1.jpg" > <div>Kevin Boos 《Robrix》</div></div>
-  <div class="pic-ele"><img src="./../../img/RustChinaConf2025/RustChinaConf-9.14-afternoon-2.jpg" > <div>Guillaume Gomez 《How Doctests Work》</div></div>
-  <div class="pic-ele"><img src="./../../img/RustChinaConf2025/RustChinaConf-9.14-afternoon-3.jpg" > <div>David Lattimore 《Creation of an executable》</div></div>
-  <div class="pic-ele"><img src="./../../img/RustChinaConf2025/RustChinaConf-9.14-afternoon-4.jpg" > <div>张奇祺 解读 #[tokio::main] </div></div>
-  <div class="pic-ele"><img src="./../../img/RustChinaConf2025/RustChinaConf-9.14-afternoon-5.jpg" > <div>黄旭东 《双向并发链表实现》</div></div>
+  <div class="pic-ele"><img src="./RustChinaConf2025/RustChinaConf-me.jpg" > <div>分会场主持和演讲 os-checker</div></div>
+  <div class="pic-ele"><img src="./RustChinaConf2025/RustChinaConf-9.14-afternoon-1.jpg" > <div>Kevin Boos 《Robrix》</div></div>
+  <div class="pic-ele"><img src="./RustChinaConf2025/RustChinaConf-9.14-afternoon-2.jpg" > <div>Guillaume Gomez 《How Doctests Work》</div></div>
+  <div class="pic-ele"><img src="./RustChinaConf2025/RustChinaConf-9.14-afternoon-3.jpg" > <div>David Lattimore 《Creation of an executable》</div></div>
+  <div class="pic-ele"><img src="./RustChinaConf2025/RustChinaConf-9.14-afternoon-4.jpg" > <div>张奇祺 解读 #[tokio::main] </div></div>
+  <div class="pic-ele"><img src="./RustChinaConf2025/RustChinaConf-9.14-afternoon-5.jpg" > <div>黄旭东 《双向并发链表实现》</div></div>
   <div class="pic-ele"><img src="https://github.com/user-attachments/assets/ff8cb9ab-9bd1-44a7-b843-7f04d1ec9756" > <div>演讲列表</div></div>
 </div>
 
