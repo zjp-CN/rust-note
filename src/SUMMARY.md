@@ -31,3 +31,4 @@
       - [Sans-IO](./async/Sans-IO.md)
 - [随笔]()
   - [我与 Rust 语言的 5 年](./ramblings/five-years-with-rust.md)
+  - [RustChinaConf 2025 记录](./ramblings/RustChinaConf2025.md)
